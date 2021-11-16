@@ -1,0 +1,22 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/users.schema.json",
+    "title": "Users database",
+    "description": "This document records the list of users",
+    "type": "object",
+    "properties": {
+        "username": {
+            "type": "string",
+            "unique": true,
+            "description": "must be string"
+        },
+        "name": {
+            "type": "string",
+            "description": "must be string"
+        },
+        "age": {
+            "type": "integer",
+            "description": "must be int"
+        }
+    }
+}
