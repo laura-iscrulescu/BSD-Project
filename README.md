@@ -16,3 +16,11 @@ The following technologies are going to be used in order to implement this proje
 - NGINX
 - MongoDB
 - RedisDB
+
+
+# Members:
+- Dumitru Călin 
+- Iscrulescu Laura
+- Marinescu Ana
+- Moraru Liviu
+- Radu Cosmin
