@@ -10,24 +10,23 @@ const main = async () => {
 	// init env vars
 	dotenv.config({ path: path.join(__dirname, ".env") });
 
-	const options = {
-		useNewUrlParser: true,
-		useFindAndModify: false,
-		useCreateIndex: true,
-		auth: {
-			user: "root",
-			password: "example"
-		},
-		useUnifiedTopology: true,
-		dbName: "bsdDB"
-	};
+	const { MONGO_URI, MONGO_USER, MONGO_PASSWORD } = process.env;
 
-	if (process.env.MONGO_HOST) {
-		await db.connect(`mongodb://${process.env.MONGO_HOST}`, options);
-	} else {
-		console.log("No MONGO_HOST has been initialized");
+	if (MONGO_URI && MONGO_USER && MONGO_PASSWORD) {
+		const options = {
+			useNewUrlParser: true,
+			useFindAndModify: false,
+			useCreateIndex: true,
+			useUnifiedTopology: true,
+			auth: {
+				user: MONGO_USER,
+				password: MONGO_PASSWORD
+			},
+			dbName: "bsdDB"
+		};
+		await db.connect(MONGO_URI, options);
 	}
-
+	
 	app.use(cors());
 
 	app.use(express.json());

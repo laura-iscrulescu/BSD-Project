@@ -6,4 +6,6 @@ router.get("/", (req, res) => {
 	res.send("It works!");
 });
 
+router.use("/transactions", require("./transaction"));
+
 module.exports = router;

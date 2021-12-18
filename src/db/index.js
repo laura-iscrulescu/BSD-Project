@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const TRANSACTION = require("./transaction");
 
 async function connect (URI, options) {
 	try {
@@ -11,6 +12,7 @@ async function connect (URI, options) {
 
 const DB = {
 	connect,
+	transaction: TRANSACTION
 };
 
 module.exports = DB;
