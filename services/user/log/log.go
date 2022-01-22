@@ -6,6 +6,7 @@ import (
 
 type ILog interface {
 	Info(message string)
+	Error(message string)
 	Fatal(err error)
 }
 
@@ -18,6 +19,10 @@ func Initialize() ILog {
 
 func (l *logStruct) Info(message string) {
 	logger.Println(message)
+}
+
+func (l *logStruct) Error(message string) {
+	logger.Println("ERROR: " + message)
 }
 
 func (l *logStruct) Fatal(err error) {

@@ -30,19 +30,24 @@ func TestMainDB(t *testing.T) {
 		})
 
 		Convey("Add entry\n", func() {
-			err = mdb.Add("test-username", "test-name", float64(23))
+			err = mdb.Add("test-email", "test-password", "test-name")
 			So(err, ShouldEqual, nil)
 		})
 
-		Convey("Get entry\n", func() {
-			resp, err := mdb.Get("test-username")
+		Convey("Get existent entry\n", func() {
+			resp, err := mdb.Get("test-email")
 			So(err, ShouldEqual, nil)
 			So(resp, ShouldNotEqual, nil)
 			log.Info(*resp.Name)
 		})
 
+		Convey("Get missing entry\n", func() {
+			_, err := mdb.Get("test-email-2")
+			So(err, ShouldNotEqual, nil)
+		})
+
 		Convey("Remove entry\n", func() {
-			err = mdb.Remove("test-username")
+			err = mdb.Remove("test-email")
 			So(err, ShouldEqual, nil)
 		})
 	})
