@@ -19,7 +19,7 @@ services:
       REDIS_ADDR: "10.10.0.10"
       REDIS_PORT: "6379"
       REDIS_ENTRY_EXPIRATION: "12" # in hours
-      MONGO_DATABASE: "database"
+      MONGO_DATABASE: "bsdDB"
       MONGO_COLLECTION: "users"
     env_file:
       - config.env
@@ -36,6 +36,10 @@ services:
     environment:
       SERVER_ADDR: "10.10.0.3"
       SERVER_PORT: "8002"
+      MONGO_DATABASE: "bsdDB"
+      MONGO_COLLECTION: "users"
+    env_file:
+      - config.env
     ports:
       - "8002:8002"
     networks:
