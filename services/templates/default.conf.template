@@ -1,5 +1,13 @@
 upstream authorization_server {
-    server dummy-auth:5000;
+    server authenticator:8001;
+}
+
+upstream auth_server {
+    server auth:5000;
+}
+
+upstream user_server {
+    server user:8002;
 }
 
 server {
@@ -9,13 +17,21 @@ server {
 
     #access_log  /var/log/nginx/host.access.log  main;
 
-    location /login {
+    location /authenticator {
         proxy_pass http://authorization_server;
     }
 
+    location /user {
+        auth_request  /auth;
+        proxy_pass http://user_server;
+    }
+
+    
+
     location = /auth {
-            internal;
-            proxy_pass http://authorization_server;
+        internal;
+        proxy_pass http://authorization_server/authenticator/token;
+        # proxy_pass http://auth_server/authenticator/token;
     }
 
     location / {

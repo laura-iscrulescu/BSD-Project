@@ -9,6 +9,11 @@ async function main () {
         server.use('/login', cors(), (req, res) => {
             res.sendStatus(403);
         });
+
+        server.use('/authenticator/token', cors(), (req, res) =>{
+            console.log("Ruta buna");
+            res.sendStatus(200);
+        })
         //handles 404 errors
         server.use(function (req, res) {
             console.log(req.headers);

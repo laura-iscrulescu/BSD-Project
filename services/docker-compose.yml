@@ -1,5 +1,15 @@
 version: "3.9"
 services:
+  web:
+    image: nginx
+    container_name: nginx-web
+    volumes:
+      - ./templates:/etc/nginx/templates
+    ports:
+      - "8080:80"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.4
   redis:
     container_name: redis
     image: "redis:alpine"
@@ -28,6 +38,18 @@ services:
     networks:
       vpcbr:
         ipv4_address: 10.10.0.2
+  # auth:
+  #   image: node:14
+  #   container_name: dummy-auth
+  #   volumes:
+  #     - ../dummy-auth:/mnt
+  #   working_dir: /mnt
+  #   command: npm run dev  
+  #   ports:
+  #     - "5000:5000"
+  #   networks:
+  #     vpcbr:
+  #       ipv4_address: 10.10.0.6
   user:
     container_name: user
     build:
