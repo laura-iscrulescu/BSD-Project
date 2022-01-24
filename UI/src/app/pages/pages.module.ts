@@ -7,6 +7,8 @@ import { SharedModule } from '../shared/shared.module';
 import { AllTransactionsComponent } from './all-transactions/all-transactions.component';
 import { PredictionsComponent } from './predictions/predictions.component';
 import { CategoryAnalysisComponent } from './category-analysis/category-analysis.component';
+import { NgChartsModule } from 'ng2-charts';
+// import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { CategoryAnalysisComponent } from './category-analysis/category-analysis
   imports: [
     CommonModule,
     PagesRoutingModule,
-    SharedModule
+    SharedModule,
+    NgChartsModule
+    // ModalModule.forRoot()
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
