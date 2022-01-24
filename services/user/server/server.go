@@ -60,7 +60,7 @@ func (s *serverStruct) Listen() error {
 
 	userCollection := user.Initialize(s.ctx, s.db, s.log)
 
-	http.HandleFunc("/register", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/user/register", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "REGISTER: "
 
 		var reqBody user.RegisterReq
@@ -75,7 +75,7 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/activate", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/user/activate", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "ACTIVATE: "
 		var reqBody user.ActivateReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
@@ -89,7 +89,7 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/get", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/user/get", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "GET: "
 		var reqBody user.GetReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
@@ -103,7 +103,7 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/change/password", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/user/change/password", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHANGE PASSWORD: "
 
 		var reqBody user.ChangePasswordReq
@@ -118,7 +118,7 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/change/name", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/user/change/name", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHANGE NAME: "
 		var reqBody user.ChangeNameReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
@@ -132,7 +132,7 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/change/goal", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/user/change/goal", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHANGE MONTHLY GOAL: "
 		var reqBody user.ChangeMonthlyGoalReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
@@ -146,7 +146,7 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/delete", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/user/delete", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "DELETE: "
 		var reqBody user.DeleteReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
@@ -160,7 +160,7 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/category/add", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/user/category/add", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CREATE CATEGORY: "
 		var reqBody user.AddCategoryReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
@@ -174,7 +174,7 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/category/remove", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/user/category/remove", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "DELETE CATEGORY: "
 		var reqBody user.RemoveCategoryReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)

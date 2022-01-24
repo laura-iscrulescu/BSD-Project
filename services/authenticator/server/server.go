@@ -64,7 +64,7 @@ func (s *serverStruct) Listen() error {
 
 	authenticatorCollection := authenticator.Initialize(s.ctx, s.idb, s.db, s.log)
 
-	http.HandleFunc("/password", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/authenticator/password", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "LOGIN WITH PASSWORD: "
 
 		var reqBody authenticator.LoginWithPasswordReq
@@ -78,7 +78,7 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/token", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/authenticator/token", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHECK TOKEN: "
 
 		var reqBody authenticator.CheckTokenReq
@@ -92,14 +92,14 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/tokens", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/authenticator/tokens", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "GET TOKENS: "
 
 		resp, err, code := authenticatorCollection.GetTokens()
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/single", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/authenticator/single", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "LOGOUT SINGLE DEVICE: "
 
 		var reqBody authenticator.LogoutSingleDeviceReq
@@ -113,7 +113,7 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/all", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/authenticator/all", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "LOGOUT ALL DEVICES: "
 
 		var reqBody authenticator.LogoutAllDevicesReq
