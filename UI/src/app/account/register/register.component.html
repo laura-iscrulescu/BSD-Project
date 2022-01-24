@@ -1,0 +1,126 @@
+<div class="wrapper">
+    <div class="page-header">
+      <div class="page-header-image"></div>
+      <div class="content">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-5 col-md-6 offset-md-3">
+                <div class="card card-register">
+                    <div class="card-header">
+                    <img
+                        alt="Card image"
+                        class="card-img"
+                        src="assets/img/square1-red.png"
+                    />
+
+                    <h4 class="card-title card-title-extra">Sign up</h4>
+                    </div>
+                    <div class="card-body">
+                    <form class="form" [formGroup]="registerForm" (submit)="onSubmit()">
+                        <div
+                        class="input-group"
+                        [ngClass]="{ 'input-group-focus': focus === true }"
+                        >
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                            <i class="tim-icons icon-single-02"> </i>
+                            </div>
+                        </div>
+                        <input
+                            class="form-control"
+                            placeholder="Full Name"
+                            type="text"
+                            (focus)="focus = true"
+                            (blur)="focus = false"
+                            formControlName="fullName" 
+                        />
+                        </div>
+                        <div
+                        class="input-group"
+                        [ngClass]="{ 'input-group-focus': focus1 === true }"
+                        >
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                            <i class="tim-icons icon-email-85"> </i>
+                            </div>
+                        </div>
+                        <input
+                            class="form-control"
+                            placeholder="Email"
+                            type="text"
+                            (focus)="focus1 = true"
+                            (blur)="focus1 = false"
+                            formControlName="email"
+                        />
+                        </div>
+                        <div
+                        class="input-group"
+                        [ngClass]="{ 'input-group-focus': focus2 === true }"
+                        >
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                            <i class="tim-icons icon-lock-circle"> </i>
+                            </div>
+                        </div>
+                        <input
+                            class="form-control"
+                            placeholder="Password"
+                            [type]="hide1 ? 'password' : 'text'"
+                            (focus)="focus2 = true"
+                            (blur)="focus2 = false"
+                            formControlName="password"
+                        />
+                        <div class="input-group-append">
+                            <button class="input-group-text" (click)="hide1 = !hide1">
+                                <i [ngClass]="hide1 === true ? 'fas fa-eye' : 'far fa-eye-slash'" style="margin-left: 15px"></i>
+                            </button>
+                        </div>
+                        </div>
+                        <div
+                        class="input-group"
+                        [ngClass]="{ 'input-group-focus': focus3 === true }"
+                        >
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                            <i class="tim-icons icon-check-2"> </i>
+                            </div>
+                        </div>
+                        <input
+                            class="form-control"
+                            placeholder="Repeat Password"
+                            [type]="hide2 ? 'password' : 'text'"
+                            (focus)="focus3 = true"
+                            (blur)="focus3 = false"
+                            formControlName="repeatPassword"
+                        />
+                        <div class="input-group-append">
+                            <button class="input-group-text" (click)="hide2= !hide2">
+                                <i [ngClass]="hide2 === true ? 'fas fa-eye' : 'far fa-eye-slash'" style="margin-left: 15px"></i>
+                            </button>
+                        </div>
+                        </div>
+                    </form>
+                    </div>
+                    <div class="card-footer btn-row-container">
+                        <a
+                            class="btn btn-danger btn-round btn-lg"
+                            type="submit"
+                            (click)="onSubmit()"
+                        >
+                            Register
+                        </a>
+                        <a
+                            class="btn mr-1 btn-round btn-lg"
+                            routerLink="/account/login"
+                        >
+                            Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
