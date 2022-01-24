@@ -6,9 +6,6 @@ type RegisterReq struct {
 	Name     string `json:"name,required"`
 }
 
-type ChangePasswordReq struct {
-}
-
 type ActivateReq struct {
 }
 
@@ -16,20 +13,34 @@ type GetReq struct {
 	Email string
 }
 
-type UpdateReq struct {
+type ChangePasswordReq struct {
+	Email       string
+	OldPassword string
+	NewPassword string
 }
 
-type MonthlyGoalReq struct {
+type ChangeNameReq struct {
+	Email string
+	Name  string
+}
+
+type ChangeMonthlyGoalReq struct {
+	Email string
+	Goal  int
 }
 
 type DeleteReq struct {
 	Email string
 }
 
-type CreateCategoryReq struct {
+type AddCategoryReq struct {
+	Email    string
+	Category string
 }
 
-type DeleteCategoryReq struct {
+type RemoveCategoryReq struct {
+	Email    string
+	Category string
 }
 
 type Resp struct {

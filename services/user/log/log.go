@@ -4,7 +4,7 @@ import (
 	logger "log"
 )
 
-type ILog interface {
+type Log interface {
 	Info(message string)
 	Error(message string)
 	Fatal(err error)
@@ -13,7 +13,7 @@ type ILog interface {
 type logStruct struct {
 }
 
-func Initialize() ILog {
+func Initialize() Log {
 	return &logStruct{}
 }
 

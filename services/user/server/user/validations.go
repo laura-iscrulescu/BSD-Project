@@ -25,3 +25,19 @@ func CheckName(name string) error {
 
 	return nil
 }
+
+func CheckGoal(goal int) error {
+	if goal < 0 {
+		return errors.New("The goal should be positive")
+	}
+
+	return nil
+}
+
+func CheckCategory(category string) error {
+	if category == "" {
+		return errors.New("The category field must be specified")
+	}
+
+	return nil
+}

@@ -21,13 +21,13 @@ type serverStruct struct {
 
 	ctx context.Context
 	db  mainDB.MainDB
-	log log.ILog
+	log log.Log
 }
 
 func Initialize(
 	ctx context.Context,
 	db mainDB.MainDB,
-	log log.ILog,
+	log log.Log,
 ) (IServer, error) {
 	log.Info("Initialize server...")
 
@@ -75,21 +75,6 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/password", func(writer http.ResponseWriter, req *http.Request) {
-		errPrefix := "CHANGE PASSWORD: "
-
-		var reqBody user.ChangePasswordReq
-		err := json.NewDecoder(req.Body).Decode(&reqBody)
-		if err != nil {
-			s.log.Error(errPrefix + err.Error())
-			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
-			return
-		}
-
-		resp, err, code := userCollection.ChangePassword(reqBody)
-		s.sendResponse(writer, errPrefix, resp, err, code)
-	})
-
 	http.HandleFunc("/activate", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "ACTIVATE: "
 		var reqBody user.ActivateReq
@@ -118,9 +103,10 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/update", func(writer http.ResponseWriter, req *http.Request) {
-		errPrefix := "UPDATE: "
-		var reqBody user.UpdateReq
+	http.HandleFunc("/change/password", func(writer http.ResponseWriter, req *http.Request) {
+		errPrefix := "CHANGE PASSWORD: "
+
+		var reqBody user.ChangePasswordReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
 			s.log.Error(errPrefix + err.Error())
@@ -128,13 +114,13 @@ func (s *serverStruct) Listen() error {
 			return
 		}
 
-		resp, err, code := userCollection.Update(reqBody)
+		resp, err, code := userCollection.ChangePassword(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/goal", func(writer http.ResponseWriter, req *http.Request) {
-		errPrefix := "MONTHLY GOAL: "
-		var reqBody user.MonthlyGoalReq
+	http.HandleFunc("/change/name", func(writer http.ResponseWriter, req *http.Request) {
+		errPrefix := "CHANGE NAME: "
+		var reqBody user.ChangeNameReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
 			s.log.Error(errPrefix + err.Error())
@@ -142,7 +128,21 @@ func (s *serverStruct) Listen() error {
 			return
 		}
 
-		resp, err, code := userCollection.MonthlyGoal(reqBody)
+		resp, err, code := userCollection.ChangeName(reqBody)
+		s.sendResponse(writer, errPrefix, resp, err, code)
+	})
+
+	http.HandleFunc("/change/goal", func(writer http.ResponseWriter, req *http.Request) {
+		errPrefix := "CHANGE MONTHLY GOAL: "
+		var reqBody user.ChangeMonthlyGoalReq
+		err := json.NewDecoder(req.Body).Decode(&reqBody)
+		if err != nil {
+			s.log.Error(errPrefix + err.Error())
+			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
+			return
+		}
+
+		resp, err, code := userCollection.ChangeMonthlyGoal(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
@@ -160,9 +160,9 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/category/create", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/category/add", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CREATE CATEGORY: "
-		var reqBody user.CreateCategoryReq
+		var reqBody user.AddCategoryReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
 			s.log.Error(errPrefix + err.Error())
@@ -170,13 +170,13 @@ func (s *serverStruct) Listen() error {
 			return
 		}
 
-		resp, err, code := userCollection.CreateCategory(reqBody)
+		resp, err, code := userCollection.AddCategory(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/category/delete", func(writer http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/category/remove", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "DELETE CATEGORY: "
-		var reqBody user.DeleteCategoryReq
+		var reqBody user.RemoveCategoryReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
 			s.log.Error(errPrefix + err.Error())
@@ -184,7 +184,7 @@ func (s *serverStruct) Listen() error {
 			return
 		}
 
-		resp, err, code := userCollection.DeleteCategory(reqBody)
+		resp, err, code := userCollection.RemoveCategory(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 

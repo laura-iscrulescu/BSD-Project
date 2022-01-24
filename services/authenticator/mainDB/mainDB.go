@@ -5,8 +5,7 @@ import (
 	"errors"
 	"os"
 	"services/authenticator/log"
-	"services/authenticator/mainDB/models"
-	"strconv"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,9 +14,7 @@ import (
 )
 
 type MainDB interface {
-	Add(username, name string, age int) error
-	Get(username string) (*models.UsersJson, error)
-	Remove(username string) error
+	Get(username string) (*UserModel, error)
 }
 
 type mainDBStruct struct {
@@ -26,18 +23,15 @@ type mainDBStruct struct {
 	log    log.Log
 }
 
+type UserModel struct {
+	Name       string   `json:"name"`
+	Email      string   `json:"email"`
+	Password   string   `json:"password"`
+	Categories []string `json:"categories"`
+}
+
 func Initialize(ctx context.Context, log log.Log) (MainDB, error) {
 	log.Info("Initialize and connect to the MainDB...")
-
-	user, ok := os.LookupEnv("MONGO_USER")
-	if !ok {
-		return nil, errors.New("Mongo user not provided in environment")
-	}
-
-	password, ok := os.LookupEnv("MONGO_PASSWORD")
-	if !ok {
-		return nil, errors.New("Mongo password not provided in environment")
-	}
 
 	database, ok := os.LookupEnv("MONGO_DATABASE")
 	if !ok {
@@ -49,14 +43,25 @@ func Initialize(ctx context.Context, log log.Log) (MainDB, error) {
 		return nil, errors.New("Mongo collection not provided in environment")
 	}
 
-	mongoURI := "mongodb+srv://" + user + ":" + password + "@cluster0.dd7vb.mongodb.net/database?retryWrites=true&w=majority"
+	user, ok := os.LookupEnv("MONGO_USER")
+	if !ok {
+		return nil, errors.New("Mongo user not provided in environment")
+	}
+
+	password, ok := os.LookupEnv("MONGO_PASSWORD")
+	if !ok {
+		return nil, errors.New("Mongo password not provided in environment")
+	}
+
+	mongoURI := "mongodb+srv://" + user + ":" + password + "@cluster0.dd7vb.mongodb.net/" + database + "?retryWrites=true&w=majority"
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(mongoURI))
 	if err != nil {
 		return nil, err
 	}
 
-	err = client.Connect(ctx)
+	newCtx, _ := context.WithTimeout(ctx, 12*time.Hour)
+	err = client.Connect(newCtx)
 	if err != nil {
 		return nil, err
 	}
@@ -75,40 +80,12 @@ func Initialize(ctx context.Context, log log.Log) (MainDB, error) {
 	}, nil
 }
 
-func (m *mainDBStruct) Add(username, name string, age int) error {
-	m.log.DB("MainDB\tAdd\t", username, name, strconv.Itoa(age))
-
-	_, err := m.client.InsertOne(m.ctx, models.UsersJson{
-		Username: &username,
-		Age:      &age,
-		Name:     &name,
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *mainDBStruct) Get(username string) (*models.UsersJson, error) {
-	m.log.DB("MainDB\tGet\t", username)
-
-	resp := &models.UsersJson{}
-	err := m.client.FindOne(m.ctx, bson.D{{"username", username}}).Decode(resp)
+func (m *mainDBStruct) Get(email string) (*UserModel, error) {
+	resp := &UserModel{}
+	err := m.client.FindOne(m.ctx, bson.D{{"email", email}}).Decode(resp)
 	if err != nil {
 		return nil, err
 	}
 
 	return resp, nil
-}
-
-func (m *mainDBStruct) Remove(username string) error {
-	m.log.DB("MainDB\tRemove\t", username)
-
-	_, err := m.client.DeleteOne(m.ctx, bson.D{{"username", username}})
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

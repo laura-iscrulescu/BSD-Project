@@ -6,6 +6,7 @@ import (
 	"os"
 	"services/authenticator/log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -14,6 +15,7 @@ import (
 type IdentityDB interface {
 	Add(key, value string) error
 	Get(key string) ([]string, error)
+	GetKey(value string) (string, error)
 	GetAll() (map[string]string, error)
 	Remove(key, value string) error
 	Clear(key string) error
@@ -71,8 +73,6 @@ func Initialize(ctx context.Context, log log.Log) (IdentityDB, error) {
 }
 
 func (i *identityDBStruct) Add(key, value string) error {
-	i.log.DB("IdentityDB\tAdd\t", key, value)
-
 	var counter int = 1
 
 	for {
@@ -92,8 +92,6 @@ func (i *identityDBStruct) Add(key, value string) error {
 }
 
 func (i *identityDBStruct) Get(key string) ([]string, error) {
-	i.log.DB("IdentityDB\tGet\t", key)
-
 	keys, _, err := i.client.Scan(0, key+".*", 0).Result()
 	if err != nil {
 		return nil, err
@@ -112,15 +110,34 @@ func (i *identityDBStruct) Get(key string) ([]string, error) {
 	return values, nil
 }
 
-func (i *identityDBStruct) GetAll() (map[string]string, error) {
-	i.log.DB("IdentityDB\tGetAll")
+func (i *identityDBStruct) GetKey(value string) (string, error) {
+	keys, _, err := i.client.Scan(0, "*", 0).Result()
+	if err != nil {
+		return "", err
+	}
 
+	for _, keyWithCounter := range keys {
+		valueInIDB, err := i.client.Get(keyWithCounter).Result()
+		if err != nil {
+			return "", err
+		}
+
+		if valueInIDB == value {
+			keyList := strings.Split(keyWithCounter, ".")
+			return strings.Join(keyList[:len(keyList)-1], ""), nil
+		}
+	}
+
+	return "", errors.New("Email not found for given token")
+}
+
+func (i *identityDBStruct) GetAll() (map[string]string, error) {
 	keys, _, err := i.client.Scan(0, "*", 0).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	var entries map[string]string
+	entries := make(map[string]string)
 	for _, key := range keys {
 		value, err := i.client.Get(key).Result()
 		if err != nil {
@@ -134,8 +151,6 @@ func (i *identityDBStruct) GetAll() (map[string]string, error) {
 }
 
 func (i *identityDBStruct) Remove(key, value string) error {
-	i.log.DB("IdentityDB\tRemove\t", key, value)
-
 	keys, _, err := i.client.Scan(0, key+".*", 0).Result()
 	if err != nil {
 		return err
@@ -161,8 +176,6 @@ func (i *identityDBStruct) Remove(key, value string) error {
 }
 
 func (i *identityDBStruct) Clear(key string) error {
-	i.log.DB("IdentityDB\tClear\t", key)
-
 	keys, _, err := i.client.Scan(0, key+".*", 0).Result()
 	if err != nil {
 		return err
@@ -179,8 +192,6 @@ func (i *identityDBStruct) Clear(key string) error {
 }
 
 func (i *identityDBStruct) ClearAll() error {
-	i.log.DB("IdentityDB\tClearAll")
-
 	err := i.client.FlushDB().Err()
 	if err != nil {
 		return err

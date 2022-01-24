@@ -16,13 +16,14 @@ import (
 type MainDB interface {
 	Add(email, password, name string) error
 	Get(email string) (*UserModel, error)
+	Update(user *UserModel) error
 	Remove(username string) error
 }
 
 type mainDBStruct struct {
 	ctx    context.Context
 	client *mongo.Collection
-	log    log.ILog
+	log    log.Log
 }
 
 type UserModel struct {
@@ -30,9 +31,10 @@ type UserModel struct {
 	Email      string   `json:"email"`
 	Password   string   `json:"password"`
 	Categories []string `json:"categories"`
+	Goal       int      `json:"goal"`
 }
 
-func Initialize(ctx context.Context, log log.ILog) (MainDB, error) {
+func Initialize(ctx context.Context, log log.Log) (MainDB, error) {
 	log.Info("Initialize and connect to the MainDB...")
 
 	database, ok := os.LookupEnv("MONGO_DATABASE")
@@ -87,7 +89,8 @@ func (m *mainDBStruct) Add(email, password, name string) error {
 		Email:      email,
 		Password:   password,
 		Name:       name,
-		Categories: []string{"category1", "category2"},
+		Categories: []string{"default-category1", "default-category2"},
+		Goal:       0,
 	})
 	if err != nil {
 		return err
@@ -104,6 +107,20 @@ func (m *mainDBStruct) Get(email string) (*UserModel, error) {
 	}
 
 	return resp, nil
+}
+
+func (m *mainDBStruct) Update(user *UserModel) error {
+	_, err := m.client.DeleteOne(m.ctx, bson.D{{"email", user.Email}})
+	if err != nil {
+		return err
+	}
+
+	_, err = m.client.InsertOne(m.ctx, *user)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (m *mainDBStruct) Remove(email string) error {

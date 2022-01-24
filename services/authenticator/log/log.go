@@ -6,8 +6,7 @@ import (
 
 type Log interface {
 	Info(message string)
-	DB(message string, opts ...string)
-	Error(err error)
+	Error(message string)
 	Fatal(err error)
 }
 
@@ -22,20 +21,8 @@ func (l *logStruct) Info(message string) {
 	logger.Println(message)
 }
 
-func (l *logStruct) DB(message string, opts ...string) {
-	final := ""
-	final += message
-	for _, opt := range opts {
-		final += opt
-		if opt != opts[len(opts)-1] {
-			final += ":"
-		}
-	}
-	logger.Println(final)
-}
-
-func (l *logStruct) Error(err error) {
-	logger.Println("ERROR: " + err.Error())
+func (l *logStruct) Error(message string) {
+	logger.Println("ERROR: " + message)
 }
 
 func (l *logStruct) Fatal(err error) {
