@@ -8,7 +8,10 @@ import { AllTransactionsComponent } from './all-transactions/all-transactions.co
 import { PredictionsComponent } from './predictions/predictions.component';
 import { CategoryAnalysisComponent } from './category-analysis/category-analysis.component';
 import { NgChartsModule } from 'ng2-charts';
-// import { ModalModule } from 'ngx-bootstrap/modal';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -21,8 +24,12 @@ import { NgChartsModule } from 'ng2-charts';
     CommonModule,
     PagesRoutingModule,
     SharedModule,
-    NgChartsModule
-    // ModalModule.forRoot()
+    NgChartsModule,
+    PaginationModule.forRoot(),
+    ModalModule.forRoot(),
+    BsDatepickerModule.forRoot(),
+    ReactiveFormsModule,
+    FormsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

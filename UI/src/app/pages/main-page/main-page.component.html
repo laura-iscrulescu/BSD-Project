@@ -1,4 +1,5 @@
 <div class="container">
+  <!-- top cards -->
   <div class="row home-page-header">
     <div class="col-lg-6 col-sm-12 px-2 py-2">
       <div class="card card-stats">
@@ -42,99 +43,190 @@
       </div>
     </div>
 </div>
-<div class="row" style="margin-top: 25px">
-        <div class="chart-area" style="width: 50%; padding: 15px"><canvas id="donutChart"> </canvas></div>
-        <div class="chart-area" style="width: 50%; padding: 15px"><canvas id="lineChart"> </canvas></div>
-</div>
-<!-- <div class="row">
-    <div
-    aria-hidden="true"
-    aria-labelledby="myModalLabel"
-    bsModal
-    class="modal fade modal-black"
-    #myModal2="bs-modal"
-    id="myModal2"
-    role="dialog"
-    tabindex="-1"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header justify-content-center">
-          <button
-            aria-hidden="true"
-            class="close"
-            data-dismiss="modal"
-            (click)="myModal2.hide()"
-            type="button"
-          >
-            <i class="tim-icons icon-simple-remove text-white"> </i>
-          </button>
-          <div class="text-muted text-center ml-auto mr-auto">
-            <h3 class="mb-0">Sign in with</h3>
-          </div>
-        </div>
-        <div class="modal-body">
-          <div class="btn-wrapper text-center">
-            <a class="btn btn-neutral btn-icon mr-1" href="javascript:void(0)">
-              <img src="assets/img/github.svg" />
-            </a>
-            <a class="btn btn-neutral btn-icon" href="javascript:void(0)">
-              <img src="assets/img/google.svg" />
-            </a>
-          </div>
-          <div class="text-center text-muted mb-4 mt-3">
-            <small> Or sign in with credentials </small>
-          </div>
-          <form role="form">
-            <div class="form-group mb-3">
-              <div class="input-group input-group-alternative" [ngClass]="{'input-group-focus':focus1===true}">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">
-                    <i class="tim-icons icon-email-85"> </i>
-                  </span>
-                </div>
-                <input
-                  class="form-control"
-                  placeholder="Email"
-                  type="email"
-                  (focus)="focus1=true" (blur)="focus1=false"
-                />
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="input-group input-group-alternative" [ngClass]="{'input-group-focus':focus2===true}">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">
-                    <i class="tim-icons icon-key-25"> </i>
-                  </span>
-                </div>
-                <input
-                  class="form-control"
-                  placeholder="Password"
-                  type="password"
-                  (focus)="focus2=true" (blur)="focus2=false"
-                />
-              </div>
-            </div>
-            <div class="form-check mt-3">
-              <label class="form-check-label">
-                <input
-                  checked="checked"
-                  class="form-check-input"
-                  type="checkbox"
-                />
 
-                <span class="form-check-sign"> </span> Remember me!
-              </label>
-            </div>
-            <div class="text-center">
-              <button class="btn btn-primary my-4" type="button">
-                Sign in
-              </button>
-            </div>
-          </form>
-        </div>
+<!-- charts -->
+<div class="container">
+  <div class="row" style="margin-top: 25px">
+          <div class="chart-area" style="width: 50%; padding: 15px"><canvas id="donutChart"> </canvas></div>
+          <div class="chart-area" style="width: 50%; padding: 15px"><canvas id="lineChart"> </canvas></div>
+  </div>
+</div>
+
+<!-- modals -->
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <button
+      class="btn btn-success"
+      data-target="#transactionModal"
+      (click)="transactionModal.show()"
+      >
+      Add new transaction
+    </button>
+    </div>
+    <div class="col-md-4">
+      <button
+      class="btn btn-warning"
+      data-target="#categoryModal"
+      (click)="categoryModal.show()"
+      >
+      Add new category
+    </button>
+    </div>
+  </div>
+</div>
+
+  <!-- transaction modal -->
+  <div
+  aria-hidden="true"
+  aria-labelledby="myModalLabel"
+  bsModal
+  class="modal fade modal-black"
+  #transactionModal="bs-modal"
+  id="transactionModal"
+  role="dialog"
+  tabindex="-1"
+  >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <button
+        aria-hidden="true"
+        class="close"
+        data-dismiss="modal"
+        (click)="transactionModal.hide(); transactionFormInit(); closeTransactionModal = true"
+        type="button"
+        >
+        <i class="tim-icons icon-simple-remove text-white"> </i>
+      </button>
+      <div class="text-muted text-center ml-auto mr-auto">
+        <h3 class="mb-0">Add new transaction</h3>
       </div>
     </div>
-  </div> -->
+    <div class="modal-body">
+      <form role="form" [formGroup]="transactionForm" (submit)="onSubmitTransaction()">
+        <div class="form-group mb-3">
+          <label>Product/service name</label>
+          <div class="input-group input-group-alternative" [ngClass]="{'input-group-focus':focus1===true}">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="tim-icons icon-email-85"> </i>
+              </span>
+            </div>
+            <input
+            class="form-control"
+            placeholder="Product name"
+            type="text"
+            (focus)="focus1=true" (blur)="focus1=false"
+            formControlName="productName"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Total price</label>
+          <div class="input-group input-group-alternative" [ngClass]="{'input-group-focus':focus2===true}">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="tim-icons icon-key-25"> </i>
+              </span>
+            </div>
+            <input
+            class="form-control"
+            placeholder="Total price"
+            type="number"
+            (focus)="focus2=true" (blur)="focus2=false"
+            formControlName="price"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <div class="input-group input-group-alternative" [ngClass]="{'input-group-focus':focus3===true}">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="tim-icons icon-key-25"> </i>
+              </span>
+            </div>
+            <input type="date"
+             placeholder="Date"
+             class="form-control"
+             (focus)="focus3=true" (blur)="focus3=false"
+             formControlName="date"
+             >
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <div class="input-group input-group-alternative" [ngClass]="{'input-group-focus':focus4===true}">
+            <select class="form-control" id="exampleFormControlSelect1" placeholder="Category" formControlName="category">
+              <option *ngFor="let category of categories" [value]="category.categoryName">{{ category.categoryName }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="text-center">
+          <button class="btn btn-primary my-4" type="button" type="submit"
+          (click)="onSubmitTransaction(); closeTransactionModal ? transactionModal.hide() : false">
+            Add
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+
+  <!-- category modal -->
+  <div
+  aria-hidden="true"
+  aria-labelledby="myModalLabel"
+  bsModal
+  class="modal fade modal-black"
+  #categoryModal="bs-modal"
+  id="categoryModal"
+  role="dialog"
+  tabindex="-1"
+  >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <button
+        aria-hidden="true"
+        class="close"
+        data-dismiss="modal"
+        (click)="categoryModal.hide(); categoryFormInit(); closeCategoryModal = true"
+        type="button"
+        >
+        <i class="tim-icons icon-simple-remove text-white"> </i>
+      </button>
+      <div class="text-muted text-center ml-auto mr-auto">
+        <h3 class="mb-0">Add new category</h3>
+      </div>
+    </div>
+    <div class="modal-body">
+      <form role="form" [formGroup]="categoryForm">
+        <div class="form-group mb-3">
+          <label>Category name</label>
+          <div class="input-group input-group-alternative" [ngClass]="{'input-group-focus':focus5===true}">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="tim-icons icon-email-85"> </i>
+              </span>
+            </div>
+            <input
+            class="form-control"
+            placeholder="Category name"
+            type="text"
+            (focus)="focus5=true" (blur)="focus5=false"
+            formControlName="categoryName"
+            />
+          </div>
+        </div>
+        <div class="text-center">
+          <button class="btn btn-primary my-4" type="button" type="submit"
+          (click)="onSubmitCategory(); closeCategoryModal ? categoryModal.hide() : false">
+            Add
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

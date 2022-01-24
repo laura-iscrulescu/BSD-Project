@@ -1,1 +1,32 @@
-<p>all-transactions works!</p>
+<div class="container">
+  <table class="table custom-table-style">
+    <thead>
+      <tr>
+        <th class="text-center">#</th>
+        <th>Product Name</th>
+        <th>Date</th>
+        <th>Price</th>
+        <th class="text-right">Category</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let transaction of transactions; let i = index">
+        <td class="text-center">{{ i + 1}}</td>
+        <td>{{ transaction.productName }}</td>
+        <td>{{ transaction.date }}</td>
+        <td>{{ transaction.price }}</td>
+        <td class="td-actions text-right">
+          <span class=" badge badge-primary">
+                {{ transaction.category }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+    <nav>
+        <pagination class="justify-content-center" (ngModel)="currentPage"
+        [totalItems]="transactions.length" (pageChanged)="pageChanged($event)"
+        [itemsPerPage]="1">
+        </pagination>
+    </nav>
+</div>;

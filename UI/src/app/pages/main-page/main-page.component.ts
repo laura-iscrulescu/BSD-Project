@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Chart, ChartItem } from 'chart.js';
+import { Category } from '../models/category.model';
 // import Chart from 'chart.js';
 
 @Component({
@@ -33,10 +35,36 @@ export class MainPageComponent implements OnInit {
 
   public focus1: boolean;
   public focus2: boolean;
+  public focus3: boolean;
+  public focus4: boolean;
+  public focus5: boolean;
 
-  constructor () { }
+  public categories = [
+    new Category('Rent'),
+    new Category('Groceries')
+  ]
+
+  public transactions = [];
+
+  public transactionForm = this.formBuilder.group({
+    productName: '',
+    price: '',
+    date: null,
+    category: null
+  });
+
+  public categoryForm = this.formBuilder.group({
+    categoryName: ''
+  });
+
+  public closeTransactionModal = false;
+  public closeCategoryModal = false;
+
+  constructor (private formBuilder: FormBuilder) { }
 
   ngOnInit (): void {
+    // charts
+
     // const ctx = document.getElementById('lineChart') as ChartItem;
     // const ctx = canvas.getContext('2d') as ChartItem;
     // const gradientFill = ctx.createLinearGradient(0, 350, 0, 50);
@@ -119,6 +147,62 @@ export class MainPageComponent implements OnInit {
           borderWidth: 1
         }]
       }
+    });
+
+    // modals
+    this.transactionFormInit();
+    this.categoryFormInit();
+  }
+
+  public onSubmitTransaction (): void {
+    this.closeTransactionModal = false;
+    console.log(this.transactionForm);
+
+    if (this.transactionForm.valid) {
+      console.log('valid');
+      const reqBody = {
+        productName: this.transactionForm.value.productName,
+        price: this.transactionForm.value.price,
+        date: this.transactionForm.value.date,
+        category: this.transactionForm.value.category
+      };
+      console.log(reqBody);
+      this.closeTransactionModal = true;
+      this.transactionFormInit();
+    } else {
+      console.log('invalid');
+    }
+  }
+
+  public onSubmitCategory (): void {
+    this.closeCategoryModal = false;
+    console.log(this.categoryForm);
+
+    if (this.categoryForm.valid) {
+      console.log('valid');
+      const reqBody = {
+        categoryName: this.categoryForm.value.categoryName
+      };
+      console.log(reqBody);
+      this.closeCategoryModal = true;
+      this.categoryFormInit();
+    } else {
+      console.log('invalid');
+    }
+  }
+
+  public transactionFormInit (): void {
+    this.transactionForm = this.formBuilder.group({
+      productName: [null, Validators.required],
+      price: [null, Validators.required],
+      date: [null, Validators.required],
+      category: [null, Validators.required]
+    });
+  }
+
+  public categoryFormInit (): void {
+    this.categoryForm = this.formBuilder.group({
+      categoryName: [null, Validators.required]
     });
   }
 }
