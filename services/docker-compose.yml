@@ -1,0 +1,55 @@
+version: "3.9"
+services:
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.10
+  authenticator:
+    container_name: authenticator
+    build:
+      dockerfile: Dockerfile
+      context: ./authenticator
+    environment:
+      SERVER_ADDR: "10.10.0.2"
+      SERVER_PORT: "8001"
+      REDIS_ADDR: "10.10.0.10"
+      REDIS_PORT: "6379"
+      REDIS_ENTRY_EXPIRATION: "12" # in hours
+      MONGO_DATABASE: "bsdDB"
+      MONGO_COLLECTION: "users"
+    env_file:
+      - config.env
+    ports:
+      - "8001:8001"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.2
+  user:
+    container_name: user
+    build:
+      dockerfile: Dockerfile
+      context: ./user
+    environment:
+      SERVER_ADDR: "10.10.0.3"
+      SERVER_PORT: "8002"
+      MONGO_DATABASE: "bsdDB"
+      MONGO_COLLECTION: "users"
+    env_file:
+      - config.env
+    ports:
+      - "8002:8002"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.3
+
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.10.0.0/16
+         gateway: 10.10.0.1
