@@ -58,7 +58,7 @@ export class RegisterComponent implements OnInit {
 
         if (res && res.status === 200) {
           if (res.data.Code === 200) {
-            this.router.navigate(['login']);
+            this.router.navigate(['account', 'login']);
           }
         }
       } catch (e) {
