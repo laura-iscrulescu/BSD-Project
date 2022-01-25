@@ -8,7 +8,6 @@ import (
 	"services/authenticator/identityDB"
 	"services/authenticator/log"
 	"services/authenticator/mainDB"
-	"fmt"
 
 	uuid "github.com/satori/go.uuid"
 )
