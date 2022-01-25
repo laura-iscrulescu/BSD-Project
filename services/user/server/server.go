@@ -102,7 +102,8 @@ func (s *serverStruct) Listen() error {
 		if fullToken == "" {
 			errMessage := "The token was not provided"
 			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
+			return
 		}
 
 		reqBody := user.GetReq{
@@ -119,7 +120,8 @@ func (s *serverStruct) Listen() error {
 		if fullToken == "" {
 			errMessage := "The token was not provided"
 			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
+			return
 		}
 
 		var reqBody user.ChangePasswordReq
@@ -142,7 +144,8 @@ func (s *serverStruct) Listen() error {
 		if fullToken == "" {
 			errMessage := "The token was not provided"
 			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
+			return
 		}
 
 		var reqBody user.ChangeNameReq
@@ -165,7 +168,8 @@ func (s *serverStruct) Listen() error {
 		if fullToken == "" {
 			errMessage := "The token was not provided"
 			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
+			return
 		}
 
 		var reqBody user.ChangeMonthlyGoalReq
@@ -188,7 +192,8 @@ func (s *serverStruct) Listen() error {
 		if fullToken == "" {
 			errMessage := "The token was not provided"
 			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
+			return
 		}
 
 		var reqBody user.DeleteReq
@@ -211,7 +216,8 @@ func (s *serverStruct) Listen() error {
 		if fullToken == "" {
 			errMessage := "The token was not provided"
 			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
+			return
 		}
 
 		var reqBody user.AddCategoryReq
@@ -234,7 +240,8 @@ func (s *serverStruct) Listen() error {
 		if fullToken == "" {
 			errMessage := "The token was not provided"
 			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
+			return
 		}
 
 		var reqBody user.RemoveCategoryReq

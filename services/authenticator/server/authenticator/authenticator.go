@@ -53,12 +53,12 @@ func (a *authenticatorStruct) LoginWithPassword(req LoginWithPasswordReq) ([]byt
 	// Check to see if the user exists
 	user, err := a.mainDB.Get(req.Email)
 	if err != nil {
-		return nil, errors.New("The pair email-password is incorrect"), http.StatusForbidden
+		return nil, errors.New("The pair email-password is incorrect"), http.StatusUnauthorized
 	}
 
 	// Check to see if password matches
 	if req.Password != user.Password {
-		return nil, errors.New("The pair email-password is incorrect"), http.StatusForbidden
+		return nil, errors.New("The pair email-password is incorrect"), http.StatusUnauthorized
 	}
 
 	// Create and save the token
@@ -91,7 +91,7 @@ func (a *authenticatorStruct) CheckToken(req CheckTokenReq) ([]byte, error, int)
 	// Check to see if the token exists
 	_, err = a.identityDB.GetKey(req.Token)
 	if err != nil {
-		return nil, err, http.StatusForbidden
+		return nil, err, http.StatusUnauthorized
 	}
 
 	return nil, nil, http.StatusOK

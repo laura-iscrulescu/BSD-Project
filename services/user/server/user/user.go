@@ -61,7 +61,7 @@ func (u *userStruct) Register(req RegisterReq) ([]byte, error, int) {
 	// Check to see if the user already exists
 	_, err = u.mainDB.Get(req.Email)
 	if err == nil {
-		return nil, errors.New("User already exists with this E-mail"), http.StatusBadRequest
+		return nil, errors.New("User already exists with this E-mail"), http.StatusConflict
 	}
 
 	// Add the new user to the database
@@ -89,7 +89,7 @@ func (u *userStruct) Get(req GetReq) ([]byte, error, int) {
 	// Get the email for the coresponding token
 	email, err := u.identityDB.GetKey(req.Token)
 	if err != nil {
-		return nil, err, http.StatusForbidden
+		return nil, err, http.StatusUnauthorized
 	}
 
 	// Get the user from the database
@@ -129,7 +129,7 @@ func (u *userStruct) ChangePassword(req ChangePasswordReq) ([]byte, error, int) 
 	// Get the email for the coresponding token
 	email, err := u.identityDB.GetKey(req.Token)
 	if err != nil {
-		return nil, err, http.StatusForbidden
+		return nil, err, http.StatusUnauthorized
 	}
 
 	// Get the user from the database
@@ -170,7 +170,7 @@ func (u *userStruct) ChangeName(req ChangeNameReq) ([]byte, error, int) {
 	// Get the email for the coresponding token
 	email, err := u.identityDB.GetKey(req.Token)
 	if err != nil {
-		return nil, err, http.StatusForbidden
+		return nil, err, http.StatusUnauthorized
 	}
 
 	// Get the user from the database
@@ -206,7 +206,7 @@ func (u *userStruct) ChangeMonthlyGoal(req ChangeMonthlyGoalReq) ([]byte, error,
 	// Get the email for the coresponding token
 	email, err := u.identityDB.GetKey(req.Token)
 	if err != nil {
-		return nil, err, http.StatusForbidden
+		return nil, err, http.StatusUnauthorized
 	}
 
 	// Get the user from the database
@@ -242,7 +242,7 @@ func (u *userStruct) Delete(req DeleteReq) ([]byte, error, int) {
 	// Get the email for the coresponding token
 	email, err := u.identityDB.GetKey(req.Token)
 	if err != nil {
-		return nil, err, http.StatusForbidden
+		return nil, err, http.StatusUnauthorized
 	}
 
 	// Check to see if the user exists
@@ -253,7 +253,7 @@ func (u *userStruct) Delete(req DeleteReq) ([]byte, error, int) {
 
 	// Check to see if password matches
 	if req.Password != user.Password {
-		return nil, errors.New("The password is incorrect"), http.StatusForbidden
+		return nil, errors.New("The password is incorrect"), http.StatusUnauthorized
 	}
 
 	// Remove the user from the database
@@ -282,7 +282,7 @@ func (u *userStruct) AddCategory(req AddCategoryReq) ([]byte, error, int) {
 	// Get the email for the coresponding token
 	email, err := u.identityDB.GetKey(req.Token)
 	if err != nil {
-		return nil, err, http.StatusForbidden
+		return nil, err, http.StatusUnauthorized
 	}
 
 	// Get the user from the database
@@ -318,7 +318,7 @@ func (u *userStruct) RemoveCategory(req RemoveCategoryReq) ([]byte, error, int) 
 	// Get the email for the coresponding token
 	email, err := u.identityDB.GetKey(req.Token)
 	if err != nil {
-		return nil, err, http.StatusForbidden
+		return nil, err, http.StatusUnauthorized
 	}
 
 	// Get the user from the database

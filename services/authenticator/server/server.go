@@ -86,7 +86,8 @@ func (s *serverStruct) Listen() error {
 		if fullToken == "" {
 			errMessage := "The token was not provided"
 			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
+			return
 		}
 
 		reqBody := authenticator.CheckTokenReq{
@@ -110,7 +111,8 @@ func (s *serverStruct) Listen() error {
 		if fullToken == "" {
 			errMessage := "The token was not provided"
 			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
+			return
 		}
 
 		reqBody := authenticator.LogoutSingleDeviceReq{
@@ -127,7 +129,8 @@ func (s *serverStruct) Listen() error {
 		if fullToken == "" {
 			errMessage := "The token was not provided"
 			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
+			return
 		}
 
 		reqBody := authenticator.LogoutAllDevicesReq{
