@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/add", async (req, res) => {
 	const transaction = req.body;
 
-	if (transaction.user_id && transaction.value && transaction.currency && transaction.category && transaction.date) {
+	if (transaction.user_id && transaction.name && transaction.value && transaction.category && transaction.date) {
         try {
             const newTransaction = await db.transaction.addTransaction(transaction);
             res.status(200).send(newTransaction);
