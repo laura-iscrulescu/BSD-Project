@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   registerURL: "http://localhost:8080/user/register",
-  loginURL: "http://localhost:8080/authenticator/password"
+  loginURL: "http://localhost:8080/authenticator/password",
+  authenticator: "http://localhost:8080/authenticator"
 };
 
 /*

@@ -42,6 +42,9 @@ export class LoginComponent implements OnInit {
         password: this.loginForm.value.password
       };
 
+      this.loginForm.get('email').setValue('test2@test.com');
+      this.loginForm.get('password').setValue('test2');
+
       try {
         const options: AxiosRequestConfig = {
           method: 'POST',

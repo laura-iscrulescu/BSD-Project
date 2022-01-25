@@ -34,7 +34,8 @@ const routes: Routes = [
     children: [
       { path: '', component: CategoryAnalysisComponent }
     ]
-  }
+  },
+  {path: '', redirectTo: 'home'}
 ];
 
 @NgModule({
