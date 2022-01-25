@@ -55,7 +55,9 @@ export class LoginComponent implements OnInit {
         if (res && res.status === 200) {
           if (res.data.Code === 200) {
             const response = JSON.parse(res.data.Resp);
+
             localStorage.setItem('userToken', response.token);
+            localStorage.setItem('userId', response.user_id)
             localStorage.setItem('lang', 'EN');
             
             this.router.navigate(['transactions', 'home']);
