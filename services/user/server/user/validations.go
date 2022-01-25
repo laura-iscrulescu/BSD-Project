@@ -18,6 +18,14 @@ func CheckPassword(password string) error {
 	return nil
 }
 
+func CheckToken(token string) error {
+	if token == "" {
+		return errors.New("The token field must be specified")
+	}
+
+	return nil
+}
+
 func CheckName(name string) error {
 	if name == "" {
 		return errors.New("The name field must be specified")

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"services/user/identityDB"
 	"services/user/log"
 	"services/user/mainDB"
 	"services/user/utils"
@@ -23,23 +24,25 @@ type User interface {
 }
 
 type userStruct struct {
-	ctx    context.Context
-	mainDB mainDB.MainDB
-	log    log.Log
+	ctx        context.Context
+	identityDB identityDB.IdentityDB
+	mainDB     mainDB.MainDB
+	log        log.Log
 }
 
-func Initialize(ctx context.Context, mainDB mainDB.MainDB, log log.Log) User {
+func Initialize(ctx context.Context, identityDB identityDB.IdentityDB, mainDB mainDB.MainDB, log log.Log) User {
 	return &userStruct{
-		ctx:    ctx,
-		mainDB: mainDB,
-		log:    log,
+		ctx:        ctx,
+		identityDB: identityDB,
+		mainDB:     mainDB,
+		log:        log,
 	}
 }
 
 func (u *userStruct) Register(req RegisterReq) ([]byte, error, int) {
 	u.log.Info("REGISTER FUNCTION")
 
-	// Validate Email, password and name
+	// Validate Email, Password and Name
 	err := CheckEmail(req.Email)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
@@ -77,14 +80,20 @@ func (u *userStruct) Activate(req ActivateReq) ([]byte, error, int) {
 func (u *userStruct) Get(req GetReq) ([]byte, error, int) {
 	u.log.Info("GET FUNCTION")
 
-	// Validate Email, password and name
-	err := CheckEmail(req.Email)
+	// Validate Token
+	err := CheckToken(req.Token)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
 
+	// Get the email for the coresponding token
+	email, err := u.identityDB.GetKey(req.Token)
+	if err != nil {
+		return nil, err, http.StatusForbidden
+	}
+
 	// Get the user from the database
-	user, err := u.mainDB.Get(req.Email)
+	user, err := u.mainDB.Get(email)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -101,8 +110,8 @@ func (u *userStruct) Get(req GetReq) ([]byte, error, int) {
 func (u *userStruct) ChangePassword(req ChangePasswordReq) ([]byte, error, int) {
 	u.log.Info("CHANGE PASSWORD FUNCTION")
 
-	// Validate Email, OldPassword and NewPassword
-	err := CheckEmail(req.Email)
+	// Validate Token, OldPassword and NewPassword
+	err := CheckToken(req.Token)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -117,8 +126,14 @@ func (u *userStruct) ChangePassword(req ChangePasswordReq) ([]byte, error, int) 
 		return nil, err, http.StatusBadRequest
 	}
 
+	// Get the email for the coresponding token
+	email, err := u.identityDB.GetKey(req.Token)
+	if err != nil {
+		return nil, err, http.StatusForbidden
+	}
+
 	// Get the user from the database
-	user, err := u.mainDB.Get(req.Email)
+	user, err := u.mainDB.GetWithPassword(email)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -130,7 +145,7 @@ func (u *userStruct) ChangePassword(req ChangePasswordReq) ([]byte, error, int) 
 
 	// Update user Password
 	user.Password = req.NewPassword
-	err = u.mainDB.Update(user)
+	err = u.mainDB.UpdateWithPassword(user)
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
 	}
@@ -141,8 +156,8 @@ func (u *userStruct) ChangePassword(req ChangePasswordReq) ([]byte, error, int) 
 func (u *userStruct) ChangeName(req ChangeNameReq) ([]byte, error, int) {
 	u.log.Info("CHANGE NAME FUNCTION")
 
-	// Validate Email and Name
-	err := CheckEmail(req.Email)
+	// Validate Token and Name
+	err := CheckToken(req.Token)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -152,8 +167,14 @@ func (u *userStruct) ChangeName(req ChangeNameReq) ([]byte, error, int) {
 		return nil, err, http.StatusBadRequest
 	}
 
+	// Get the email for the coresponding token
+	email, err := u.identityDB.GetKey(req.Token)
+	if err != nil {
+		return nil, err, http.StatusForbidden
+	}
+
 	// Get the user from the database
-	user, err := u.mainDB.Get(req.Email)
+	user, err := u.mainDB.Get(email)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -171,8 +192,8 @@ func (u *userStruct) ChangeName(req ChangeNameReq) ([]byte, error, int) {
 func (u *userStruct) ChangeMonthlyGoal(req ChangeMonthlyGoalReq) ([]byte, error, int) {
 	u.log.Info("CHANGE MONTHLY GOAL FUNCTION")
 
-	// Validate Email and Name
-	err := CheckEmail(req.Email)
+	// Validate Token and Name
+	err := CheckToken(req.Token)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -182,8 +203,14 @@ func (u *userStruct) ChangeMonthlyGoal(req ChangeMonthlyGoalReq) ([]byte, error,
 		return nil, err, http.StatusBadRequest
 	}
 
+	// Get the email for the coresponding token
+	email, err := u.identityDB.GetKey(req.Token)
+	if err != nil {
+		return nil, err, http.StatusForbidden
+	}
+
 	// Get the user from the database
-	user, err := u.mainDB.Get(req.Email)
+	user, err := u.mainDB.Get(email)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -201,20 +228,36 @@ func (u *userStruct) ChangeMonthlyGoal(req ChangeMonthlyGoalReq) ([]byte, error,
 func (u *userStruct) Delete(req DeleteReq) ([]byte, error, int) {
 	u.log.Info("DELETE FUNCTION")
 
-	// Validate Email, password and name
-	err := CheckEmail(req.Email)
+	// Validate Token and Password
+	err := CheckToken(req.Token)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
+	}
+
+	err = CheckPassword(req.Password)
+	if err != nil {
+		return nil, err, http.StatusBadRequest
+	}
+
+	// Get the email for the coresponding token
+	email, err := u.identityDB.GetKey(req.Token)
+	if err != nil {
+		return nil, err, http.StatusForbidden
 	}
 
 	// Check to see if the user exists
-	_, err = u.mainDB.Get(req.Email)
+	user, err := u.mainDB.GetWithPassword(email)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
 
+	// Check to see if password matches
+	if req.Password != user.Password {
+		return nil, errors.New("The password is incorrect"), http.StatusForbidden
+	}
+
 	// Remove the user from the database
-	err = u.mainDB.Remove(req.Email)
+	err = u.mainDB.Remove(email)
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
 	}
@@ -225,8 +268,8 @@ func (u *userStruct) Delete(req DeleteReq) ([]byte, error, int) {
 func (u *userStruct) AddCategory(req AddCategoryReq) ([]byte, error, int) {
 	u.log.Info("ADD CATEGORY FUNCTION")
 
-	// Validate Email and Category
-	err := CheckEmail(req.Email)
+	// Validate Token and Category
+	err := CheckToken(req.Token)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -236,8 +279,14 @@ func (u *userStruct) AddCategory(req AddCategoryReq) ([]byte, error, int) {
 		return nil, err, http.StatusBadRequest
 	}
 
+	// Get the email for the coresponding token
+	email, err := u.identityDB.GetKey(req.Token)
+	if err != nil {
+		return nil, err, http.StatusForbidden
+	}
+
 	// Get the user from the database
-	user, err := u.mainDB.Get(req.Email)
+	user, err := u.mainDB.Get(email)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -255,8 +304,8 @@ func (u *userStruct) AddCategory(req AddCategoryReq) ([]byte, error, int) {
 func (u *userStruct) RemoveCategory(req RemoveCategoryReq) ([]byte, error, int) {
 	u.log.Info("REMOVE CATEGORY FUNCTION")
 
-	// Validate Email and Category
-	err := CheckEmail(req.Email)
+	// Validate Token and Category
+	err := CheckToken(req.Token)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -266,8 +315,14 @@ func (u *userStruct) RemoveCategory(req RemoveCategoryReq) ([]byte, error, int) 
 		return nil, err, http.StatusBadRequest
 	}
 
+	// Get the email for the coresponding token
+	email, err := u.identityDB.GetKey(req.Token)
+	if err != nil {
+		return nil, err, http.StatusForbidden
+	}
+
 	// Get the user from the database
-	user, err := u.mainDB.Get(req.Email)
+	user, err := u.mainDB.Get(email)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}

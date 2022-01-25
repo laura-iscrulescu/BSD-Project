@@ -14,7 +14,7 @@ type LogoutSingleDeviceReq struct {
 }
 
 type LogoutAllDevicesReq struct {
-	Email string
+	Token string
 }
 
 type Resp struct {

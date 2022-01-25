@@ -10,36 +10,37 @@ type ActivateReq struct {
 }
 
 type GetReq struct {
-	Email string
+	Token string
 }
 
 type ChangePasswordReq struct {
-	Email       string
+	Token       string
 	OldPassword string
 	NewPassword string
 }
 
 type ChangeNameReq struct {
-	Email string
+	Token string
 	Name  string
 }
 
 type ChangeMonthlyGoalReq struct {
-	Email string
+	Token string
 	Goal  int
 }
 
 type DeleteReq struct {
-	Email string
+	Token    string
+	Password string
 }
 
 type AddCategoryReq struct {
-	Email    string
+	Token    string
 	Category string
 }
 
 type RemoveCategoryReq struct {
-	Email    string
+	Token    string
 	Category string
 }
 

@@ -2,9 +2,9 @@ upstream authorization_server {
     server authenticator:8001;
 }
 
-upstream auth_server {
-    server auth:5000;
-}
+#upstream auth_server {
+#    server auth:5000;
+#}
 
 upstream user_server {
     server user:8002;

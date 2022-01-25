@@ -10,6 +10,7 @@ import (
 	"services/authenticator/log"
 	"services/authenticator/mainDB"
 	"services/authenticator/server/authenticator"
+	"strings"
 )
 
 type IServer interface {
@@ -28,9 +29,9 @@ type serverStruct struct {
 
 func Initialize(
 	ctx context.Context,
-	log log.Log,
 	identityDB identityDB.IdentityDB,
 	mainDB mainDB.MainDB,
+	log log.Log,
 ) (IServer, error) {
 	log.Info("Initialize server...")
 
@@ -81,12 +82,15 @@ func (s *serverStruct) Listen() error {
 	http.HandleFunc("/authenticator/token", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHECK TOKEN: "
 
-		var reqBody authenticator.CheckTokenReq
-		err := json.NewDecoder(req.Body).Decode(&reqBody)
-		if err != nil {
-			s.log.Error(errPrefix + err.Error())
-			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
-			return
+		fullToken := req.Header.Get("Authorization")
+		if fullToken == "" {
+			errMessage := "The token was not provided"
+			s.log.Error(errPrefix + errMessage)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+		}
+
+		reqBody := authenticator.CheckTokenReq{
+			Token: strings.Split(fullToken, "Bearer ")[1],
 		}
 		resp, err, code := authenticatorCollection.CheckToken(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
@@ -102,12 +106,15 @@ func (s *serverStruct) Listen() error {
 	http.HandleFunc("/authenticator/single", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "LOGOUT SINGLE DEVICE: "
 
-		var reqBody authenticator.LogoutSingleDeviceReq
-		err := json.NewDecoder(req.Body).Decode(&reqBody)
-		if err != nil {
-			s.log.Error(errPrefix + err.Error())
-			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
-			return
+		fullToken := req.Header.Get("Authorization")
+		if fullToken == "" {
+			errMessage := "The token was not provided"
+			s.log.Error(errPrefix + errMessage)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+		}
+
+		reqBody := authenticator.LogoutSingleDeviceReq{
+			Token: strings.Split(fullToken, "Bearer ")[1],
 		}
 		resp, err, code := authenticatorCollection.LogoutSingleDevice(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
@@ -116,12 +123,15 @@ func (s *serverStruct) Listen() error {
 	http.HandleFunc("/authenticator/all", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "LOGOUT ALL DEVICES: "
 
-		var reqBody authenticator.LogoutAllDevicesReq
-		err := json.NewDecoder(req.Body).Decode(&reqBody)
-		if err != nil {
-			s.log.Error(errPrefix + err.Error())
-			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
-			return
+		fullToken := req.Header.Get("Authorization")
+		if fullToken == "" {
+			errMessage := "The token was not provided"
+			s.log.Error(errPrefix + errMessage)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+		}
+
+		reqBody := authenticator.LogoutAllDevicesReq{
+			Token: strings.Split(fullToken, "Bearer ")[1],
 		}
 		resp, err, code := authenticatorCollection.LogoutAllDevices(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
@@ -149,6 +159,7 @@ func (s *serverStruct) sendResponse(writer http.ResponseWriter, errPrefix string
 		return
 	}
 
+	writer.WriteHeader(code)
 	_, err = writer.Write(respBody)
 	if err != nil {
 		s.log.Error(errMessage)

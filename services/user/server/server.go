@@ -6,9 +6,11 @@ import (
 	"errors"
 	"net/http"
 	"os"
+	"services/user/identityDB"
 	"services/user/log"
 	"services/user/mainDB"
 	"services/user/server/user"
+	"strings"
 )
 
 type IServer interface {
@@ -20,13 +22,15 @@ type serverStruct struct {
 	port string
 
 	ctx context.Context
+	idb identityDB.IdentityDB
 	db  mainDB.MainDB
 	log log.Log
 }
 
 func Initialize(
 	ctx context.Context,
-	db mainDB.MainDB,
+	identityDB identityDB.IdentityDB,
+	mainDB mainDB.MainDB,
 	log log.Log,
 ) (IServer, error) {
 	log.Info("Initialize server...")
@@ -48,7 +52,8 @@ func Initialize(
 		port: port,
 
 		ctx: ctx,
-		db:  db,
+		idb: identityDB,
+		db:  mainDB,
 		log: log,
 	}, nil
 }
@@ -58,7 +63,7 @@ func (s *serverStruct) Listen() error {
 		Addr: ":" + s.port,
 	}
 
-	userCollection := user.Initialize(s.ctx, s.db, s.log)
+	userCollection := user.Initialize(s.ctx, s.idb, s.db, s.log)
 
 	http.HandleFunc("/user/register", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "REGISTER: "
@@ -77,6 +82,7 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/activate", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "ACTIVATE: "
+
 		var reqBody user.ActivateReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
@@ -91,20 +97,30 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/get", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "GET: "
-		var reqBody user.GetReq
-		err := json.NewDecoder(req.Body).Decode(&reqBody)
-		if err != nil {
-			s.log.Error(errPrefix + err.Error())
-			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
-			return
+
+		fullToken := req.Header.Get("Authorization")
+		if fullToken == "" {
+			errMessage := "The token was not provided"
+			s.log.Error(errPrefix + errMessage)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
 		}
 
+		reqBody := user.GetReq{
+			Token: strings.Split(fullToken, "Bearer ")[1],
+		}
 		resp, err, code := userCollection.Get(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
 	http.HandleFunc("/user/change/password", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHANGE PASSWORD: "
+
+		fullToken := req.Header.Get("Authorization")
+		if fullToken == "" {
+			errMessage := "The token was not provided"
+			s.log.Error(errPrefix + errMessage)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+		}
 
 		var reqBody user.ChangePasswordReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
@@ -113,6 +129,7 @@ func (s *serverStruct) Listen() error {
 			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
 			return
 		}
+		reqBody.Token = strings.Split(fullToken, "Bearer ")[1]
 
 		resp, err, code := userCollection.ChangePassword(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
@@ -120,6 +137,14 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/change/name", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHANGE NAME: "
+
+		fullToken := req.Header.Get("Authorization")
+		if fullToken == "" {
+			errMessage := "The token was not provided"
+			s.log.Error(errPrefix + errMessage)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+		}
+
 		var reqBody user.ChangeNameReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
@@ -127,6 +152,7 @@ func (s *serverStruct) Listen() error {
 			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
 			return
 		}
+		reqBody.Token = strings.Split(fullToken, "Bearer ")[1]
 
 		resp, err, code := userCollection.ChangeName(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
@@ -134,6 +160,14 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/change/goal", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHANGE MONTHLY GOAL: "
+
+		fullToken := req.Header.Get("Authorization")
+		if fullToken == "" {
+			errMessage := "The token was not provided"
+			s.log.Error(errPrefix + errMessage)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+		}
+
 		var reqBody user.ChangeMonthlyGoalReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
@@ -141,6 +175,7 @@ func (s *serverStruct) Listen() error {
 			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
 			return
 		}
+		reqBody.Token = strings.Split(fullToken, "Bearer ")[1]
 
 		resp, err, code := userCollection.ChangeMonthlyGoal(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
@@ -148,6 +183,14 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/delete", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "DELETE: "
+
+		fullToken := req.Header.Get("Authorization")
+		if fullToken == "" {
+			errMessage := "The token was not provided"
+			s.log.Error(errPrefix + errMessage)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+		}
+
 		var reqBody user.DeleteReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
@@ -155,6 +198,7 @@ func (s *serverStruct) Listen() error {
 			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
 			return
 		}
+		reqBody.Token = strings.Split(fullToken, "Bearer ")[1]
 
 		resp, err, code := userCollection.Delete(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
@@ -162,6 +206,14 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/category/add", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CREATE CATEGORY: "
+
+		fullToken := req.Header.Get("Authorization")
+		if fullToken == "" {
+			errMessage := "The token was not provided"
+			s.log.Error(errPrefix + errMessage)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+		}
+
 		var reqBody user.AddCategoryReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
@@ -169,6 +221,7 @@ func (s *serverStruct) Listen() error {
 			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
 			return
 		}
+		reqBody.Token = strings.Split(fullToken, "Bearer ")[1]
 
 		resp, err, code := userCollection.AddCategory(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
@@ -176,6 +229,14 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/category/remove", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "DELETE CATEGORY: "
+
+		fullToken := req.Header.Get("Authorization")
+		if fullToken == "" {
+			errMessage := "The token was not provided"
+			s.log.Error(errPrefix + errMessage)
+			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusBadRequest)
+		}
+
 		var reqBody user.RemoveCategoryReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
@@ -183,6 +244,7 @@ func (s *serverStruct) Listen() error {
 			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
 			return
 		}
+		reqBody.Token = strings.Split(fullToken, "Bearer ")[1]
 
 		resp, err, code := userCollection.RemoveCategory(reqBody)
 		s.sendResponse(writer, errPrefix, resp, err, code)
@@ -210,6 +272,7 @@ func (s *serverStruct) sendResponse(writer http.ResponseWriter, errPrefix string
 		return
 	}
 
+	writer.WriteHeader(code)
 	_, err = writer.Write(respBody)
 	if err != nil {
 		s.log.Error(errMessage)

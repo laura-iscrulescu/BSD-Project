@@ -24,7 +24,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server, err := server.Initialize(ctx, log, identityDB, mainDB)
+	server, err := server.Initialize(ctx, identityDB, mainDB, log)
 	if err != nil {
 		log.Fatal(err)
 	}

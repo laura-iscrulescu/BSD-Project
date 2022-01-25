@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect

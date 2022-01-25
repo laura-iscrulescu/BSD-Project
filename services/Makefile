@@ -3,17 +3,21 @@ user:
 
 authenticator:
 	docker-compose up --build -d redis
-	@sleep 5
+	@sleep 10
 	docker-compose up --build -d authenticator
 
+nginx:
+	docker-compose up --build -d web
+
 services:
-	docker-compose build redis authenticator user
+	docker-compose build redis authenticator user nginx
 
 run:
 	$(MAKE) user
 	$(MAKE) authenticator
+	$(MAKE) nginx
 
 stop:
 	docker-compose down
 
-.PHONY: user authenticator services run stop clean
+.PHONY: user authenticator nginx services run stop clean

@@ -53,12 +53,12 @@ func (a *authenticatorStruct) LoginWithPassword(req LoginWithPasswordReq) ([]byt
 	// Check to see if the user exists
 	user, err := a.mainDB.Get(req.Email)
 	if err != nil {
-		return nil, errors.New("The pair email-password is incorrect"), http.StatusBadRequest
+		return nil, errors.New("The pair email-password is incorrect"), http.StatusForbidden
 	}
 
 	// Check to see if password matches
 	if req.Password != user.Password {
-		return nil, errors.New("The pair email-password is incorrect"), http.StatusBadRequest
+		return nil, errors.New("The pair email-password is incorrect"), http.StatusForbidden
 	}
 
 	// Create and save the token
@@ -89,20 +89,12 @@ func (a *authenticatorStruct) CheckToken(req CheckTokenReq) ([]byte, error, int)
 	}
 
 	// Check to see if the token exists
-	email, err := a.identityDB.GetKey(req.Token)
+	_, err = a.identityDB.GetKey(req.Token)
 	if err != nil {
-		return nil, err, http.StatusBadRequest
+		return nil, err, http.StatusForbidden
 	}
 
-	// Transform email data into a string
-	emailMarshaled, err := json.Marshal(map[string]string{
-		"email": email,
-	})
-	if err != nil {
-		return nil, err, http.StatusInternalServerError
-	}
-
-	return emailMarshaled, nil, http.StatusOK
+	return nil, nil, http.StatusOK
 }
 
 func (a *authenticatorStruct) GetTokens() ([]byte, error, int) {
@@ -149,13 +141,19 @@ func (a *authenticatorStruct) LogoutAllDevices(req LogoutAllDevicesReq) ([]byte,
 	a.log.Info("LOGOUT ALL DEVICES FUNCTION")
 
 	// Validate Email
-	err := CheckToken(req.Email)
+	err := CheckToken(req.Token)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
 
+	// Get the email for the coresponding token
+	email, err := a.identityDB.GetKey(req.Token)
+	if err != nil {
+		return nil, nil, http.StatusOK
+	}
+
 	// Clear the tokens for the given Email
-	err = a.identityDB.Clear(req.Email)
+	err = a.identityDB.Clear(email)
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
 	}

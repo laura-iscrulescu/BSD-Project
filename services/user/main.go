@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"services/user/identityDB"
 	"services/user/log"
 	"services/user/mainDB"
 	"services/user/server"
@@ -13,45 +14,20 @@ func main() {
 
 	log := log.Initialize()
 
-	db, err := mainDB.Initialize(ctx, log)
+	identityDB, err := identityDB.Initialize(ctx, log)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	server, err := server.Initialize(ctx, db, log)
+	mainDB, err := mainDB.Initialize(ctx, log)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// mdb, err := mainDB.Initialize(ctx, log)
-	// if err != nil {
-	// 	log.Fatal(errors.New("1"))
-	// }
-
-	// err = mdb.Add("test-email", "test-password", "test-name")
-	// if err != nil {
-	// 	log.Fatal(errors.New("2"))
-	// }
-
-	// resp, err := mdb.Get("test-email")
-	// if err != nil {
-	// 	log.Fatal(errors.New("3"))
-	// }
-	// if resp == nil {
-	// 	log.Fatal(errors.New("4"))
-	// }
-	// log.Info(resp.Name)
-
-	// _, err = mdb.Get("test-email-2")
-	// if err == nil {
-	// 	log.Fatal(errors.New("5"))
-	// }
-	// log.Error(err.Error())
-
-	// err = mdb.Remove("test-email")
-	// if err != nil {
-	// 	log.Fatal(errors.New("6"))
-	// }
+	server, err := server.Initialize(ctx, identityDB, mainDB, log)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	err = server.Listen()
 	if err != nil {
