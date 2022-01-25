@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import axios, { AxiosRequestConfig } from 'axios';
 
 @Component({
   selector: 'app-register',
@@ -36,19 +37,31 @@ export class RegisterComponent implements OnInit {
     }, { validators: this.checkPasswords });
   }
 
-  public onSubmit (): void {
-    console.log(this.registerForm);
-
+  public async onSubmit (): Promise<void> {
     if (this.registerForm.valid) {
       const reqBody = {
-        fullName: this.registerForm.value.fullName,
+        name: this.registerForm.value.fullName,
         password: this.registerForm.value.password,
         email: this.registerForm.value.email
       };
-      console.log(reqBody);
+      
+      try {
+        const options: AxiosRequestConfig = {
+          method: 'POST',
+          data: reqBody,
+          url: 'http://localhost:8080/user/register'
+        };
 
-      // const res = this.http.post<any>('http://localhost:3000/api/v1/users/add', reqBody).subscribe(
-      //   (data) => this.router.navigate(['login']));
+        let res = await axios(options);
+
+        if (res && res.status === 200) {
+          if (res.data.Code === 200) {
+            this.router.navigate(['login']);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
