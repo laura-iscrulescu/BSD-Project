@@ -114,3 +114,14 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+# Symbolic links
+*-link*
+
+# Ignore Mac system files
+.DS_store
+
+# Ignore node_modules folder
+node_modules
+
+# Ignore files related to API keys
+*.env
