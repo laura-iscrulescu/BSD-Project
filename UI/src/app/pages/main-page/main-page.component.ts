@@ -6,6 +6,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { UserIDStorageService } from 'src/app/_services/storage/userId-storage.service';
 import { environment } from '../../../environments/environment'
 import { TokenStorageService } from 'src/app/_services/storage/token-storage.service';
+import _ from 'lodash';
 // import Chart from 'chart.js';
 
 @Component({
@@ -36,8 +37,8 @@ export class MainPageComponent implements OnInit {
 
   public dataLine = [80, 160, 200, 160, 250, 280, 220, 190, 200, 250, 290, 320];
 
-  public labelsDoughnut = ['Rent', 'Groceries', 'Gas', 'Clothing', 'Gifts', 'Others'];
-  public dataDoughtnut = [12, 19, 3, 5, 2, 3];
+  public labelsDoughnut = [];
+  public dataDoughtnut = [];
 
   public focus1: boolean;
   public focus2: boolean;
@@ -68,9 +69,17 @@ export class MainPageComponent implements OnInit {
 
   constructor (private formBuilder: FormBuilder, public tokenStorageService: TokenStorageService, public userIDStorageService: UserIDStorageService) { }
 
-  ngOnInit (): void {
+  async ngOnInit (): Promise<void> {
     // get data
-    this.getAllTransactions();
+    await this.getAllTransactions();
+    const groupedTransactions = _.groupBy(this.transactions, "category");
+    this.labelsDoughnut = Object.keys(groupedTransactions);
+    
+    for(const key in groupedTransactions) {
+      this.dataDoughtnut.push(_.sumBy(groupedTransactions[key], "value"));
+    }
+    console.log(this.labelsDoughnut)
+    console.log(this.dataDoughtnut)
 
     // charts
 
@@ -233,16 +242,7 @@ export class MainPageComponent implements OnInit {
       console.log(options);
       let res = await axios(options);
       if (res && res.status === 200) {
-        console.log(res);
-        // if (res.data.Code === 200) {
-        // const response = JSON.parse(res.data.Resp);
-        
-        //   localStorage.setItem('userToken', response.token);
-        //   localStorage.setItem('userId', response.user_id)
-        //   localStorage.setItem('lang', 'EN');
-          
-        //   // this.router.navigate(['transactions', 'home']);
-        // }
+        this.transactions = res.data
       }
     } catch (e) {
       console.error(e);
