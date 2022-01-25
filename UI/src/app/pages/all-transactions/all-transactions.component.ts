@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import axios, { AxiosRequestConfig } from 'axios';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
+import { TokenStorageService } from 'src/app/_services/storage/token-storage.service';
+import { UserIDStorageService } from 'src/app/_services/storage/userId-storage.service';
+import { environment } from 'src/environments/environment';
 import { Transaction } from '../models/transactions.model';
+import { ColumnMode } from "@swimlane/ngx-datatable"
 
 @Component({
   selector: 'app-all-transactions',
@@ -8,34 +13,60 @@ import { Transaction } from '../models/transactions.model';
   styleUrls: ['./all-transactions.component.scss']
 })
 export class AllTransactionsComponent implements OnInit {
-  public transactions = [
-    new Transaction('water', '11/12/2021', 22, 'Food'),
-    new Transaction('gas', '12/12/2022', 320, 'Gas'),
-    new Transaction('rent', '02/02/2022', 650, 'Rent')
-  ]
+  private apiURL = environment.allTransactions;
+  public transactions = []
+
+  rows = [];
+  loadingIndicator = true;
+  reorderable = true;
+  ColumnMode = ColumnMode;
 
   currentPage = 4;
   page?: number;
 
-  constructor () { }
+  constructor (  public tokenStorageService: TokenStorageService, public userIDStorageService: UserIDStorageService ) { }
 
-  ngOnInit (): void {
+  async ngOnInit (): Promise<void> {
+    await this.getAllTransactions();
   }
 
   pageChanged (event: PageChangedEvent): void {
     this.page = event.page;
   }
 
-  // TO DO
-//   pageChanged(event: PageChangedEvent): void {
-//     const startItem = (event.page - 1) * event.itemsPerPage;
-//     const endItem = event.page * event.itemsPerPage;
-//     this.returnedArray = this.contentArray.slice(startItem, endItem);
-//  }
-//  ngOnInit(): void {
-//     this.contentArray = this.contentArray.map((v: string, i: number) => {
-//        return 'Line '+ (i + 1);
-//     });
-//     this.returnedArray = this.contentArray.slice(0, 5);
-//  }
+
+  public async getAllTransactions (): Promise<void> {
+    const reqBody = {
+      user_id: this.userIDStorageService.getUserId()
+    }
+    console.log(this.tokenStorageService.getToken());
+    console.log(reqBody)
+    try {
+      const options: AxiosRequestConfig = {
+        method: 'POST',
+        data: reqBody,
+        url: this.apiURL,
+        headers: {
+          Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+        }
+      };
+      console.log(options);
+      let res = await axios(options);
+      if (res && res.status === 200) {
+        this.transactions = [];
+        for (let i = 0; i < 10; i++) {
+          for (const transaction of res.data) {
+            this.transactions.push(new Transaction(
+              transaction.name,
+              transaction.date,
+              transaction.value,
+              transaction.category
+            ));
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }

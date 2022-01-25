@@ -115,3 +115,9 @@
 @import "blk-design-system/angular/alerts";
 @import "blk-design-system/angular/datepicker";
 @import "blk-design-system/angular/example-pages";
+
+// NGX Datatable
+@import '~@swimlane/ngx-datatable/index.css';
+@import '~@swimlane/ngx-datatable/themes/material.scss';
+@import '~@swimlane/ngx-datatable/themes/bootstrap.scss';
+@import '~@swimlane/ngx-datatable/assets/icons.css';
