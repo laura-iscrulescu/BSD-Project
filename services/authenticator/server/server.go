@@ -66,9 +66,13 @@ func (s *serverStruct) Listen() error {
 	authenticatorCollection := authenticator.Initialize(s.ctx, s.idb, s.db, s.log)
 
 	http.HandleFunc("/authenticator/password", func(writer http.ResponseWriter, req *http.Request) {
-		s.enableCors(writer)
-
 		errPrefix := "LOGIN WITH PASSWORD: "
+
+		s.enableCors(writer)
+		if req.Method == "OPTION" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
 
 		var reqBody authenticator.LoginWithPasswordReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
@@ -82,9 +86,13 @@ func (s *serverStruct) Listen() error {
 	})
 
 	http.HandleFunc("/authenticator/token", func(writer http.ResponseWriter, req *http.Request) {
-		s.enableCors(writer)
-
 		errPrefix := "CHECK TOKEN: "
+
+		s.enableCors(writer)
+		if req.Method == "OPTION" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
 
 		fullToken := req.Header.Get("Authorization")
 		if fullToken == "" {
@@ -102,18 +110,26 @@ func (s *serverStruct) Listen() error {
 	})
 
 	http.HandleFunc("/authenticator/tokens", func(writer http.ResponseWriter, req *http.Request) {
-		s.enableCors(writer)
-
 		errPrefix := "GET TOKENS: "
+
+		s.enableCors(writer)
+		if req.Method == "OPTION" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
 
 		resp, err, code := authenticatorCollection.GetTokens()
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
 	http.HandleFunc("/authenticator/single", func(writer http.ResponseWriter, req *http.Request) {
-		s.enableCors(writer)
-
 		errPrefix := "LOGOUT SINGLE DEVICE: "
+
+		s.enableCors(writer)
+		if req.Method == "OPTION" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
 
 		fullToken := req.Header.Get("Authorization")
 		if fullToken == "" {
@@ -131,9 +147,13 @@ func (s *serverStruct) Listen() error {
 	})
 
 	http.HandleFunc("/authenticator/all", func(writer http.ResponseWriter, req *http.Request) {
-		s.enableCors(writer)
-
 		errPrefix := "LOGOUT ALL DEVICES: "
+
+		s.enableCors(writer)
+		if req.Method == "OPTION" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
 
 		fullToken := req.Header.Get("Authorization")
 		if fullToken == "" {
@@ -155,10 +175,10 @@ func (s *serverStruct) Listen() error {
 }
 
 func (s *serverStruct) enableCors(writer http.ResponseWriter) {
-	writer.Header().Set("Access-Control-Allow-Origin", "*")
-	// writer.Header().Set("Access-Control-Allow-Methods", "POST")
-	// writer.Header().Set("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Requested-With")
-	// writer.Header().Set("Content-Type", "application/json")
+	writer.Header().Add("Access-Control-Allow-Origin", "*")
+	writer.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	writer.Header().Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Requested-With")
+	writer.Header().Add("Content-Type", "application/json")
 }
 
 func (s *serverStruct) sendResponse(writer http.ResponseWriter, errPrefix string, resp []byte, err error, code int) {
