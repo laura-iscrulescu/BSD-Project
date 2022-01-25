@@ -10,6 +10,7 @@ services:
     depends_on:
       - authenticator
       - user
+      - transactions
     networks:
       vpcbr:
         ipv4_address: 10.10.0.4
@@ -64,6 +65,22 @@ services:
     networks:
       vpcbr:
         ipv4_address: 10.10.0.3
+  transactions:
+    container_name: transactions
+    build:
+      dockerfile: Dockerfile
+      context: ./transactions
+    environment:
+      MONGO_URI: mongodb+srv://cluster0.dd7vb.mongodb.net
+    env_file:
+      - config.env
+    depends_on:
+      - redis
+    ports:
+      - "3000:3000"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.5
 
 networks:
   vpcbr:

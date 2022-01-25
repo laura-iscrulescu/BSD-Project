@@ -2,12 +2,12 @@ upstream authorization_server {
     server authenticator:8001;
 }
 
-#upstream auth_server {
-#    server auth:5000;
-#}
-
 upstream user_server {
     server user:8002;
+}
+
+upstream transactions_server {
+   server transactions:3000;
 }
 
 server {
@@ -26,6 +26,10 @@ server {
         proxy_pass http://user_server;
     }
 
+    location /api/v1/ {
+        auth_request  /auth;
+        proxy_pass http://transactions_server;
+    }
     
 
     location = /auth {
