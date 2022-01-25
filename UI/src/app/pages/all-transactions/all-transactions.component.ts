@@ -39,8 +39,6 @@ export class AllTransactionsComponent implements OnInit {
     const reqBody = {
       user_id: this.userIDStorageService.getUserId()
     }
-    console.log(this.tokenStorageService.getToken());
-    console.log(reqBody)
     try {
       const options: AxiosRequestConfig = {
         method: 'POST',
@@ -50,7 +48,6 @@ export class AllTransactionsComponent implements OnInit {
           Authorization: `Bearer ${this.tokenStorageService.getToken()}`
         }
       };
-      console.log(options);
       let res = await axios(options);
       if (res && res.status === 200) {
         this.transactions = [];
