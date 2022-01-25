@@ -162,7 +162,12 @@ func (s *serverStruct) sendResponse(writer http.ResponseWriter, errPrefix string
 		return
 	}
 
+	writer.Header().Set("Access-Control-Allow-Origin", "*")
+	writer.Header().Set("Access-Control-Allow-Methods", "POST")
+	writer.Header().Set("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Requested-With")
+	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(code)
+
 	_, err = writer.Write(respBody)
 	if err != nil {
 		s.log.Error(errMessage)
