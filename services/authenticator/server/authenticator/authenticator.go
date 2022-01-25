@@ -8,6 +8,7 @@ import (
 	"services/authenticator/identityDB"
 	"services/authenticator/log"
 	"services/authenticator/mainDB"
+	"fmt"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -71,7 +72,7 @@ func (a *authenticatorStruct) LoginWithPassword(req LoginWithPasswordReq) ([]byt
 	// Transform token data into a string
 	tokenMarshaled, err := json.Marshal(map[string]string{
 		"token":   sessionToken,
-		"user_id": user.Id.String(),
+		"user_id": user.Id.Hex(),
 	})
 	if err != nil {
 		return nil, err, http.StatusInternalServerError

@@ -25,7 +25,7 @@ type mainDBStruct struct {
 }
 
 type UserModel struct {
-	Id         primitive.ObjectID `json:"_id"`
+	Id         primitive.ObjectID `bson:"_id" json:"id,omitempty"`
 	Name       string             `json:"name"`
 	Email      string             `json:"email"`
 	Password   string             `json:"password"`
