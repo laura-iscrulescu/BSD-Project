@@ -5,12 +5,12 @@ const Transactions = new mongoose.Schema({
 		type: String,
 		required: true
 	},
+	name: {
+		type: String,
+		required: true
+	},
 	value: {
 		type: Number,
-		required: true,
-	},
-	currency: {
-		type: String,
 		required: true,
 	},
 	category: {
