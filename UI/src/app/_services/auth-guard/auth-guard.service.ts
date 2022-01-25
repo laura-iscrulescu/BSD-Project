@@ -9,7 +9,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { from, Observable, of } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { environment } from "src/environments/environment";
-import { TokenStorageService } from "../token-storage/token-storage.service";
+import { TokenStorageService } from "../storage/token-storage.service";
 @Injectable({
 	providedIn: "root",
 })
