@@ -69,7 +69,7 @@ func (s *serverStruct) Listen() error {
 		errPrefix := "LOGIN WITH PASSWORD: "
 
 		s.enableCors(writer)
-		if req.Method == "OPTION" {
+		if req.Method == "OPTIONS" {
 			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
 			return
 		}
@@ -89,7 +89,7 @@ func (s *serverStruct) Listen() error {
 		errPrefix := "CHECK TOKEN: "
 
 		s.enableCors(writer)
-		if req.Method == "OPTION" {
+		if req.Method == "OPTIONS" {
 			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
 			return
 		}
@@ -113,7 +113,7 @@ func (s *serverStruct) Listen() error {
 		errPrefix := "GET TOKENS: "
 
 		s.enableCors(writer)
-		if req.Method == "OPTION" {
+		if req.Method == "OPTIONS" {
 			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
 			return
 		}
@@ -126,7 +126,7 @@ func (s *serverStruct) Listen() error {
 		errPrefix := "LOGOUT SINGLE DEVICE: "
 
 		s.enableCors(writer)
-		if req.Method == "OPTION" {
+		if req.Method == "OPTIONS" {
 			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
 			return
 		}
@@ -150,7 +150,7 @@ func (s *serverStruct) Listen() error {
 		errPrefix := "LOGOUT ALL DEVICES: "
 
 		s.enableCors(writer)
-		if req.Method == "OPTION" {
+		if req.Method == "OPTIONS" {
 			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
 			return
 		}
