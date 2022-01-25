@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import axios, { AxiosRequestConfig } from 'axios';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  public onSubmit (): void {
+  public async onSubmit (): Promise<void> {
     console.log(this.loginForm);
 
     if (this.loginForm.valid) {
@@ -42,8 +42,29 @@ export class LoginComponent implements OnInit {
       console.log(reqBody);
 
       // to delete after backend
-      this.router.navigate(['transactions/home']);
+      // this.router.navigate(['transactions/home']);
 
+      try {
+        const options: AxiosRequestConfig = {
+          method: 'POST',
+          data: reqBody,
+          url: 'http://localhost:8080/authenticator/password'
+        };
+        console.log(options);
+        let res = await axios(options);
+        if (res) {
+          console.log(res);
+          localStorage.setItem('userRole', res.data.role);
+          localStorage.setItem('userToken', res.data.token);
+          localStorage.setItem('lang', 'EN');
+          // console.log(localStorage.getItem('userRole'));
+          // console.log(localStorage.getItem('userToken'));
+
+          this.router.navigate(['home']);
+        }
+      } catch (e) {
+        console.error(e);
+      }
       // const res = this.http.post<any>('http://localhost:3000/api/v1/users/login', reqBody).subscribe((data) => {
       //   localStorage.setItem('userRole', data.response.role);
       //   localStorage.setItem('userToken', data.response.token);
