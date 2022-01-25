@@ -125,14 +125,14 @@
               <div class="input-group input-group-alternative" [ngClass]="{'input-group-focus':focus4===true}">
                 <select class="form-control" id="exampleFormControlSelect1" placeholder="Category"
                   formControlName="category">
-                  <option *ngFor="let category of categories" [value]="category.categoryName">{{ category.categoryName
+                  <option *ngFor="let category of categories" [value]="category.name">{{ category.name
                     }}</option>
                 </select>
               </div>
             </div>
             <div class="text-center">
               <button class="btn btn-primary my-4" type="button" type="submit"
-                (click)="onSubmitTransaction(); closeTransactionModal ? transactionModal.hide() : false">
+                (click)="onSubmitTransaction(); transactionModal.hide();">
                 Add
               </button>
             </div>
@@ -171,7 +171,7 @@
             </div>
             <div class="text-center">
               <button class="btn btn-primary my-4" type="button" type="submit"
-                (click)="onSubmitCategory(); closeCategoryModal ? categoryModal.hide() : false">
+                (click)="onSubmitCategory(); categoryModal.hide()">
                 Add
               </button>
             </div>

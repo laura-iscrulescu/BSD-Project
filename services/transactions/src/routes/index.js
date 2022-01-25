@@ -7,5 +7,6 @@ router.get("/", (req, res) => {
 });
 
 router.use("/transactions", require("./transaction"));
+router.use("/categories", require("./categories"));
 
 module.exports = router;

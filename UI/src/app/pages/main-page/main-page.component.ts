@@ -15,13 +15,17 @@ import _ from 'lodash';
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
-  private apiURL = environment.allTransactions;
+  private allTransactionsURL = environment.allTransactions;
+  private allCategoriesURL = environment.allCategories;
+  private addTransactionURL = environment.addTransaction;
+
+  private doguhnutChart = null;
 
   public currentSpendings = 20;
   public budget = 30;
 
   public labelsLine = [
-    'JUN',
+    'JAN',
     'FEB',
     'MAR',
     'APR',
@@ -39,6 +43,8 @@ export class MainPageComponent implements OnInit {
 
   public labelsDoughnut = [];
   public dataDoughtnut = [];
+  public doughtnutBackgroundColor = [];
+  public doughtnutBorderColor = [];
 
   public focus1: boolean;
   public focus2: boolean;
@@ -46,11 +52,7 @@ export class MainPageComponent implements OnInit {
   public focus4: boolean;
   public focus5: boolean;
 
-  public categories = [
-    new Category('Rent'),
-    new Category('Groceries')
-  ]
-
+  public categories = []
   public transactions = [];
 
   public transactionForm = this.formBuilder.group({
@@ -71,15 +73,21 @@ export class MainPageComponent implements OnInit {
 
   async ngOnInit (): Promise<void> {
     // get data
+    await this.getAllCategories();
     await this.getAllTransactions();
     const groupedTransactions = _.groupBy(this.transactions, "category");
+    const groupedCategories = _.groupBy(this.categories, "name");
     this.labelsDoughnut = Object.keys(groupedTransactions);
     
     for(const key in groupedTransactions) {
       this.dataDoughtnut.push(_.sumBy(groupedTransactions[key], "value"));
     }
-    console.log(this.labelsDoughnut)
-    console.log(this.dataDoughtnut)
+
+    for(const key in groupedTransactions) {
+      const category = groupedCategories[key][0]
+      this.doughtnutBackgroundColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 0.2)`)
+      this.doughtnutBorderColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 1)`)
+    }
 
     // charts
 
@@ -140,28 +148,14 @@ export class MainPageComponent implements OnInit {
     });
 
     const ctx2 = document.getElementById('donutChart') as ChartItem;
-    const myChart2 = new Chart(ctx2, {
+    this.doguhnutChart = new Chart(ctx2, {
       type: 'doughnut',
       data: {
         labels: this.labelsDoughnut,
         datasets: [{
           data: this.dataDoughtnut,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)'
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)'
-          ],
+          backgroundColor: this.doughtnutBackgroundColor,
+          borderColor: this.doughtnutBorderColor,
           borderWidth: 1
         }]
       }
@@ -172,19 +166,49 @@ export class MainPageComponent implements OnInit {
     this.categoryFormInit();
   }
 
-  public onSubmitTransaction (): void {
+  public async onSubmitTransaction (): Promise<void> {
     this.closeTransactionModal = false;
     console.log(this.transactionForm);
 
     if (this.transactionForm.valid) {
-      console.log('valid');
       const reqBody = {
-        productName: this.transactionForm.value.productName,
-        price: this.transactionForm.value.price,
+        name: this.transactionForm.value.productName,
+        value: this.transactionForm.value.price,
         date: this.transactionForm.value.date,
-        category: this.transactionForm.value.category
+        category: this.transactionForm.value.category,
+        user_id: this.userIDStorageService.getUserId()
       };
-      console.log(reqBody);
+      try {
+        const options: AxiosRequestConfig = {
+          method: 'POST',
+          data: reqBody,
+          url: this.addTransactionURL,
+          headers: {
+            Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+          }
+        };
+        console.log(options);
+        let res = await axios(options);
+        if (res && res.status === 200) {
+          if (res.data) {
+            this.transactions.push(res.data) 
+            const groupedTransactions = _.groupBy(this.transactions, "category");
+            let index = 0;
+            for(const key in groupedTransactions) {
+              if (key === res.data.category) {
+                this.dataDoughtnut[index] += res.data.value;
+                break;
+              }
+              index++;
+            }
+            if (this.doguhnutChart) {
+              this.doguhnutChart.update();
+            }
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
       this.closeTransactionModal = true;
       this.transactionFormInit();
     } else {
@@ -192,16 +216,50 @@ export class MainPageComponent implements OnInit {
     }
   }
 
-  public onSubmitCategory (): void {
+  public async onSubmitCategory (): Promise<void> {
     this.closeCategoryModal = false;
-    console.log(this.categoryForm);
-
     if (this.categoryForm.valid) {
-      console.log('valid');
       const reqBody = {
-        categoryName: this.categoryForm.value.categoryName
+        user_id: this.userIDStorageService.getUserId(),
+        name: this.categoryForm.value.categoryName,
+        color: {
+          r: 128,
+          g: 128,
+          b: 128
+        }
       };
       console.log(reqBody);
+      try {
+        const options: AxiosRequestConfig = {
+          method: 'POST',
+          data: reqBody,
+          url: this.addTransactionURL,
+          headers: {
+            Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+          }
+        };
+        console.log(options);
+        // let res = await axios(options);
+        // if (res && res.status === 200) {
+        //   if (res.data) {
+        //     this.transactions.push(res.data) 
+        //     const groupedTransactions = _.groupBy(this.transactions, "category");
+        //     let index = 0;
+        //     for(const key in groupedTransactions) {
+        //       if (key === res.data.category) {
+        //         this.dataDoughtnut[index] += res.data.value;
+        //         break;
+        //       }
+        //       index++;
+        //     }
+        //     if (this.doguhnutChart) {
+        //       this.doguhnutChart.update();
+        //     }
+        //   }
+        // }
+      } catch (e) {
+        console.error(e);
+      }
       this.closeCategoryModal = true;
       this.categoryFormInit();
     } else {
@@ -228,21 +286,41 @@ export class MainPageComponent implements OnInit {
     const reqBody = {
       user_id: this.userIDStorageService.getUserId()
     }
-    console.log(this.tokenStorageService.getToken());
-    console.log(reqBody)
     try {
       const options: AxiosRequestConfig = {
         method: 'POST',
         data: reqBody,
-        url: this.apiURL,
+        url: this.allTransactionsURL,
         headers: {
           Authorization: `Bearer ${this.tokenStorageService.getToken()}`
         }
       };
-      console.log(options);
       let res = await axios(options);
       if (res && res.status === 200) {
         this.transactions = res.data
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  public async getAllCategories (): Promise<void> {
+    const reqBody = {
+      user_id: this.userIDStorageService.getUserId()
+    }
+    try {
+      const options: AxiosRequestConfig = {
+        method: 'POST',
+        data: reqBody,
+        url: this.allCategoriesURL,
+        headers: {
+          Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+        }
+      };
+      let res = await axios(options);
+      if (res && res.status === 200) {
+        console.log(res)
+        this.categories = res.data
       }
     } catch (e) {
       console.error(e);
