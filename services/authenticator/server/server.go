@@ -66,6 +66,8 @@ func (s *serverStruct) Listen() error {
 	authenticatorCollection := authenticator.Initialize(s.ctx, s.idb, s.db, s.log)
 
 	http.HandleFunc("/authenticator/password", func(writer http.ResponseWriter, req *http.Request) {
+		s.enableCors(writer)
+
 		errPrefix := "LOGIN WITH PASSWORD: "
 
 		var reqBody authenticator.LoginWithPasswordReq
@@ -80,6 +82,8 @@ func (s *serverStruct) Listen() error {
 	})
 
 	http.HandleFunc("/authenticator/token", func(writer http.ResponseWriter, req *http.Request) {
+		s.enableCors(writer)
+
 		errPrefix := "CHECK TOKEN: "
 
 		fullToken := req.Header.Get("Authorization")
@@ -98,6 +102,8 @@ func (s *serverStruct) Listen() error {
 	})
 
 	http.HandleFunc("/authenticator/tokens", func(writer http.ResponseWriter, req *http.Request) {
+		s.enableCors(writer)
+
 		errPrefix := "GET TOKENS: "
 
 		resp, err, code := authenticatorCollection.GetTokens()
@@ -105,6 +111,8 @@ func (s *serverStruct) Listen() error {
 	})
 
 	http.HandleFunc("/authenticator/single", func(writer http.ResponseWriter, req *http.Request) {
+		s.enableCors(writer)
+
 		errPrefix := "LOGOUT SINGLE DEVICE: "
 
 		fullToken := req.Header.Get("Authorization")
@@ -123,6 +131,8 @@ func (s *serverStruct) Listen() error {
 	})
 
 	http.HandleFunc("/authenticator/all", func(writer http.ResponseWriter, req *http.Request) {
+		s.enableCors(writer)
+
 		errPrefix := "LOGOUT ALL DEVICES: "
 
 		fullToken := req.Header.Get("Authorization")
@@ -144,6 +154,13 @@ func (s *serverStruct) Listen() error {
 	return srvr.ListenAndServe()
 }
 
+func (s *serverStruct) enableCors(writer http.ResponseWriter) {
+	writer.Header().Set("Access-Control-Allow-Origin", "*")
+	// writer.Header().Set("Access-Control-Allow-Methods", "POST")
+	// writer.Header().Set("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Requested-With")
+	// writer.Header().Set("Content-Type", "application/json")
+}
+
 func (s *serverStruct) sendResponse(writer http.ResponseWriter, errPrefix string, resp []byte, err error, code int) {
 	errMessage := ""
 	if err != nil {
@@ -162,12 +179,7 @@ func (s *serverStruct) sendResponse(writer http.ResponseWriter, errPrefix string
 		return
 	}
 
-	writer.Header().Set("Access-Control-Allow-Origin", "*")
-	writer.Header().Set("Access-Control-Allow-Methods", "POST")
-	writer.Header().Set("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Requested-With")
-	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(code)
-
 	_, err = writer.Write(respBody)
 	if err != nil {
 		s.log.Error(errMessage)
