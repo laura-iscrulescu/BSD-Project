@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import axios, { AxiosRequestConfig } from 'axios';
+import { environment } from '../../../environments/environment'
 
 @Component({
   selector: 'app-register',
@@ -10,6 +11,7 @@ import axios, { AxiosRequestConfig } from 'axios';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  private apiURL = environment.registerURL;
   public isCollapsed = true;
   public focus: boolean;
   public focus1: boolean;
@@ -49,7 +51,7 @@ export class RegisterComponent implements OnInit {
         const options: AxiosRequestConfig = {
           method: 'POST',
           data: reqBody,
-          url: 'http://localhost:8080/user/register'
+          url: this.apiURL
         };
 
         let res = await axios(options);

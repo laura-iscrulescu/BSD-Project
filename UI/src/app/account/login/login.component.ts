@@ -3,12 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import axios, { AxiosRequestConfig } from 'axios';
+import { environment } from '../../../environments/environment'
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  private apiURL = environment.loginURL;
   public hide = true;
   public isCollapsed = true;
   public focus: boolean;
@@ -44,7 +46,7 @@ export class LoginComponent implements OnInit {
         const options: AxiosRequestConfig = {
           method: 'POST',
           data: reqBody,
-          url: 'http://localhost:8080/authenticator/password'
+          url: this.apiURL
         };
         let res = await axios(options);
         if (res && res.status === 200) {
