@@ -39,7 +39,7 @@ router.post("/delete", async (req, res) => {
 	}
 });
 
-router.get("/", async (req, res) => {
+router.post("/", async (req, res) => {
     const { user_id } = req.body;
     if (user_id) {
         try {

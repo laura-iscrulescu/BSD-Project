@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Chart, ChartItem } from 'chart.js';
 import { Category } from '../models/category.model';
+import axios, { AxiosRequestConfig } from 'axios';
+import { UserIDStorageService } from 'src/app/_services/storage/userId-storage.service';
+import { environment } from '../../../environments/environment'
+import { TokenStorageService } from 'src/app/_services/storage/token-storage.service';
 // import Chart from 'chart.js';
 
 @Component({
@@ -10,6 +14,8 @@ import { Category } from '../models/category.model';
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
+  private apiURL = environment.allTransactions;
+
   public currentSpendings = 20;
   public budget = 30;
 
@@ -60,9 +66,12 @@ export class MainPageComponent implements OnInit {
   public closeTransactionModal = false;
   public closeCategoryModal = false;
 
-  constructor (private formBuilder: FormBuilder) { }
+  constructor (private formBuilder: FormBuilder, public tokenStorageService: TokenStorageService, public userIDStorageService: UserIDStorageService) { }
 
   ngOnInit (): void {
+    // get data
+    this.getAllTransactions();
+
     // charts
 
     // const ctx = document.getElementById('lineChart') as ChartItem;
@@ -204,5 +213,39 @@ export class MainPageComponent implements OnInit {
     this.categoryForm = this.formBuilder.group({
       categoryName: [null, Validators.required]
     });
+  }
+
+  public async getAllTransactions (): Promise<void> {
+    const reqBody = {
+      user_id: this.userIDStorageService.getUserId()
+    }
+    console.log(this.tokenStorageService.getToken());
+    console.log(reqBody)
+    try {
+      const options: AxiosRequestConfig = {
+        method: 'POST',
+        data: reqBody,
+        url: this.apiURL,
+        headers: {
+          Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+        }
+      };
+      console.log(options);
+      let res = await axios(options);
+      if (res && res.status === 200) {
+        console.log(res);
+        // if (res.data.Code === 200) {
+        // const response = JSON.parse(res.data.Resp);
+        
+        //   localStorage.setItem('userToken', response.token);
+        //   localStorage.setItem('userId', response.user_id)
+        //   localStorage.setItem('lang', 'EN');
+          
+        //   // this.router.navigate(['transactions', 'home']);
+        // }
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
