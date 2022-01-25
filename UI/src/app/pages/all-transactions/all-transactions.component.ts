@@ -54,15 +54,13 @@ export class AllTransactionsComponent implements OnInit {
       let res = await axios(options);
       if (res && res.status === 200) {
         this.transactions = [];
-        for (let i = 0; i < 10; i++) {
-          for (const transaction of res.data) {
-            this.transactions.push(new Transaction(
-              transaction.name,
-              transaction.date,
-              transaction.value,
-              transaction.category
-            ));
-          }
+        for (const transaction of res.data) {
+          this.transactions.push(new Transaction(
+            transaction.name,
+            transaction.date,
+            transaction.value,
+            transaction.category
+          ));
         }
       }
     } catch (e) {
