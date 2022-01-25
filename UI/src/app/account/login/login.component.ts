@@ -39,10 +39,6 @@ export class LoginComponent implements OnInit {
         email: this.loginForm.value.email,
         password: this.loginForm.value.password
       };
-      console.log(reqBody);
-
-      // to delete after backend
-      // this.router.navigate(['transactions/home']);
 
       try {
         const options: AxiosRequestConfig = {
@@ -50,30 +46,19 @@ export class LoginComponent implements OnInit {
           data: reqBody,
           url: 'http://localhost:8080/authenticator/password'
         };
-        console.log(options);
         let res = await axios(options);
-        if (res) {
-          console.log(res);
-          localStorage.setItem('userRole', res.data.role);
-          localStorage.setItem('userToken', res.data.token);
-          localStorage.setItem('lang', 'EN');
-          // console.log(localStorage.getItem('userRole'));
-          // console.log(localStorage.getItem('userToken'));
-
-          this.router.navigate(['home']);
+        if (res && res.status === 200) {
+          if (res.data.Code === 200) {
+            const response = JSON.parse(res.data.Resp);
+            localStorage.setItem('userToken', response.token);
+            localStorage.setItem('lang', 'EN');
+            
+            this.router.navigate(['transactions', 'home']);
+          }
         }
       } catch (e) {
         console.error(e);
       }
-      // const res = this.http.post<any>('http://localhost:3000/api/v1/users/login', reqBody).subscribe((data) => {
-      //   localStorage.setItem('userRole', data.response.role);
-      //   localStorage.setItem('userToken', data.response.token);
-      //   localStorage.setItem('lang', 'EN');
-      //   // console.log(localStorage.getItem('userRole'));
-      //   // console.log(localStorage.getItem('userToken'));
-
-      //   this.router.navigate(['home']);
-      // });
     } else {
       console.log('invalid');
     }
