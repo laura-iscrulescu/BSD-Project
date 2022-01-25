@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -24,10 +25,11 @@ type mainDBStruct struct {
 }
 
 type UserModel struct {
-	Name       string   `json:"name"`
-	Email      string   `json:"email"`
-	Password   string   `json:"password"`
-	Categories []string `json:"categories"`
+	Id         primitive.ObjectID `json:"_id"`
+	Name       string             `json:"name"`
+	Email      string             `json:"email"`
+	Password   string             `json:"password"`
+	Categories []string           `json:"categories"`
 }
 
 func Initialize(ctx context.Context, log log.Log) (MainDB, error) {

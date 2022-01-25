@@ -70,7 +70,8 @@ func (a *authenticatorStruct) LoginWithPassword(req LoginWithPasswordReq) ([]byt
 
 	// Transform token data into a string
 	tokenMarshaled, err := json.Marshal(map[string]string{
-		"token": sessionToken,
+		"token":   sessionToken,
+		"user_id": user.Id,
 	})
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
