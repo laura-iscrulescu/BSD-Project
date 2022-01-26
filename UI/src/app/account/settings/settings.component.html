@@ -1,1 +1,53 @@
-<p>settings works!</p>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-5 mx-auto">
+            <button type="button" class="btn btn-info btn-block" (click)="openModal(templateUsername, 'usernameRef')">Change username</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-5 mx-auto">
+            <button type="button" class="btn btn-warning btn-block" (click)="openModal(templatePassword, 'passwordRef')">Change password</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-5 mx-auto">
+            <button type="button" class="btn btn-success btn-block" (click)="openModal(templateGoal, 'goalRef')">Change monthly goal</button>
+        </div>
+    </div>
+</div>
+
+<ng-template #templateUsername>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Change Username</h4>
+      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="this.modals.usernameRef?.hide()">
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      This is a modal.
+    </div>
+  </ng-template>
+
+  <ng-template #templatePassword>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Change Password</h4>
+      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="this.modals.passwordRef?.hide()">
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      This is a modal.
+    </div>
+  </ng-template>
+
+  <ng-template #templateGoal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Change monthly goal</h4>
+      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="this.modals.goalRef?.hide()">
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      This is a modal.
+    </div>
+  </ng-template>

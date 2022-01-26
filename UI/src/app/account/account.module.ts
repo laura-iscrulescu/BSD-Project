@@ -21,6 +21,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SettingsComponent } from './settings/settings.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { SettingsComponent } from './settings/settings.component';
     MatGridListModule,
     MatStepperModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ModalModule.forRoot()
   ]
 })
 export class AccountModule { }

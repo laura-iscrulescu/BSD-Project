@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-settings',
@@ -6,10 +7,18 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
+  modals: {
+    usernameRef?: BsModalRef;
+    passwordRef?: BsModalRef;
+    goalRef?: BsModalRef;
+  } = {};
 
-  constructor() { }
+  constructor(private modalService: BsModalService) { }
 
   ngOnInit(): void {
   }
 
+  openModal(template: TemplateRef<any>, modalKey: string) {
+    this.modals[modalKey] = this.modalService.show(template);
+  }
 }
