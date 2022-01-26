@@ -6,6 +6,7 @@ import { UserIDStorageService } from 'src/app/_services/storage/userId-storage.s
 import { environment } from 'src/environments/environment';
 import { Transaction } from '../models/transactions.model';
 import { ColumnMode } from "@swimlane/ngx-datatable"
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-all-transactions',
@@ -15,6 +16,14 @@ import { ColumnMode } from "@swimlane/ngx-datatable"
 export class AllTransactionsComponent implements OnInit {
   private apiURL = environment.allTransactions;
   public transactions = []
+  public copyTransactions = []
+
+  valueForm = new FormGroup({
+    lowerDate: new FormControl(),
+    upperDate: new FormControl(),
+    lowerValue: new FormControl(),
+    upperValue: new FormControl()
+  })
 
   rows = [];
   loadingIndicator = true;
@@ -24,7 +33,7 @@ export class AllTransactionsComponent implements OnInit {
   currentPage = 4;
   page?: number;
 
-  constructor (  public tokenStorageService: TokenStorageService, public userIDStorageService: UserIDStorageService ) { }
+  constructor (  private formBuilder: FormBuilder, public tokenStorageService: TokenStorageService, public userIDStorageService: UserIDStorageService ) { }
 
   async ngOnInit (): Promise<void> {
     await this.getAllTransactions();
@@ -59,9 +68,53 @@ export class AllTransactionsComponent implements OnInit {
             transaction.category
           ));
         }
+        this.copyTransactions = this.transactions
       }
     } catch (e) {
       console.error(e);
     }
+  }
+
+  public checkDates(): void {
+    const lowerDate = this.valueForm.value.lowerDate
+    const upperDate = this.valueForm.value.upperDate
+    if (lowerDate && upperDate) {
+      if (lowerDate > upperDate) {
+        this.valueForm.controls['lowerDate'].setValue(upperDate) 
+        this.valueForm.controls['upperDate'].setValue(lowerDate)
+      }
+    }
+  }
+
+  public filterElems(): void {
+      const lowerDate = this.valueForm.value.lowerDate
+      const upperDate = this.valueForm.value.upperDate
+      const lowerValue = parseInt(this.valueForm.value.lowerValue)
+      const upperValue = parseInt(this.valueForm.value.upperValue)
+
+      let filteredTransactions = this.copyTransactions
+
+      if (lowerDate) {
+        filteredTransactions = filteredTransactions.filter(elem => {
+          return elem.date >= lowerDate
+        })
+      }
+      if (upperDate) {
+        filteredTransactions = filteredTransactions.filter(elem => {
+          return elem.date <= upperDate
+        })
+      }
+
+      if (lowerValue) {
+        filteredTransactions = filteredTransactions.filter(elem => {
+          return elem.price >= lowerValue
+        })
+      }
+      if (upperValue) {
+        filteredTransactions = filteredTransactions.filter(elem => {
+          return elem.price <= upperValue
+        })
+      }
+      this.transactions = filteredTransactions
   }
 }
