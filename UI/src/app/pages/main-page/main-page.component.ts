@@ -22,7 +22,7 @@ export class MainPageComponent implements OnInit {
 
   private doguhnutChart = null;
 
-  public currentSpendings = 20;
+  public currentSpendings = 0;
   public budget = 30;
 
   public labelsLine = [
@@ -64,7 +64,8 @@ export class MainPageComponent implements OnInit {
   });
 
   public categoryForm = this.formBuilder.group({
-    categoryName: ''
+    categoryName: '',
+    categoryColor: 0
   });
 
   public closeTransactionModal = false;
@@ -157,7 +158,6 @@ export class MainPageComponent implements OnInit {
 
   public async onSubmitTransaction (): Promise<void> {
     this.closeTransactionModal = false;
-    console.log(this.transactionForm);
 
     if (this.transactionForm.valid) {
       const reqBody = {
@@ -176,7 +176,6 @@ export class MainPageComponent implements OnInit {
             Authorization: `Bearer ${this.tokenStorageService.getToken()}`
           }
         };
-        console.log(options);
         let res = await axios(options);
         if (res && res.status === 200) {
           if (res.data) {
@@ -201,13 +200,8 @@ export class MainPageComponent implements OnInit {
       const reqBody = {
         user_id: this.userIDStorageService.getUserId(),
         name: this.categoryForm.value.categoryName,
-        color: {
-          r: 128,
-          g: 128,
-          b: 128
-        }
+        color: this.hexToRgb(this.categoryForm.value.categoryColor)
       };
-      console.log(reqBody);
       try {
         const options: AxiosRequestConfig = {
           method: 'POST',
@@ -217,11 +211,9 @@ export class MainPageComponent implements OnInit {
             Authorization: `Bearer ${this.tokenStorageService.getToken()}`
           }
         };
-        console.log(options);
         let res = await axios(options);
         if (res && res.status === 200) {
           if (res.data) {
-            // console.log(res.data)
             this.categories.push(res.data);
             this.updateChart();
           }
@@ -240,14 +232,15 @@ export class MainPageComponent implements OnInit {
     this.transactionForm = this.formBuilder.group({
       productName: [null, Validators.required],
       price: [null, Validators.required],
-      date: [new Date(), Validators.required],
-      category: [this.categories.length ? this.categories[0] : null, Validators.required]
+      date: [null, Validators.required],
+      category: [null, Validators.required]
     });
   }
 
   public categoryFormInit (): void {
     this.categoryForm = this.formBuilder.group({
-      categoryName: [null, Validators.required]
+      categoryName: [null, Validators.required],
+      categoryColor: [null, Validators.required]
     });
   }
 
@@ -288,7 +281,6 @@ export class MainPageComponent implements OnInit {
       };
       let res = await axios(options);
       if (res && res.status === 200) {
-        console.log(res)
         this.categories = res.data
       }
     } catch (e) {
@@ -315,6 +307,12 @@ export class MainPageComponent implements OnInit {
       this.doughtnutBorderColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 1)`)
     }
 
+    this.currentSpendings = _.sumBy(this.transactions, "value");
+
+    if (!this.currentSpendings) {
+      this.currentSpendings = 0;
+    }
+    
     if (this.doguhnutChart) {
       this.doguhnutChart.data.labels = this.labelsDoughnut;
       this.doguhnutChart.data.datasets = [{
@@ -325,5 +323,14 @@ export class MainPageComponent implements OnInit {
         }]
       this.doguhnutChart.update();
     }
+  }
+
+  public hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
   }
 }

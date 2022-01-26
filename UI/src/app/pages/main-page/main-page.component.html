@@ -116,7 +116,7 @@
                     <i class="tim-icons icon-key-25"> </i>
                   </span>
                 </div>
-                <input type="date" id="myDate" placeholder="Date" class="form-control" (focus)="focus3=true" (blur)="focus3=false"
+                <input type="date" placeholder="Date" class="form-control" (focus)="focus3=true" (blur)="focus3=false"
                   formControlName="date" value="Date()">
               </div>
             </div>
@@ -169,9 +169,20 @@
                   (blur)="focus5=false" formControlName="categoryName" />
               </div>
             </div>
+            <div class="form-group mb-3">
+              <label>Color</label>
+              <div class="input-group input-group-alternative" [ngClass]="{'input-group-focus':focus5===true}">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <!-- <i class="tim-icons icon-email-85"> </i> -->
+                  </span>
+                </div>
+                  <input type="color" formControlName="categoryColor" value="#C852E6">
+              </div>
+            </div>
             <div class="text-center">
               <button class="btn btn-primary my-4" type="button" type="submit"
-                (click)="onSubmitCategory(); closeCategoryModal ? categoryModal.hide() : false">
+                (click)="onSubmitCategory(); categoryModal.hide()">
                 Add
               </button>
             </div>
