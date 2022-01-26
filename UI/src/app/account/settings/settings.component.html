@@ -27,23 +27,21 @@
       <form role="form" [formGroup]="changeUserNameForm">
         <div class="form-group">
           <div class="row">
-            <div class="col">
-              <div class="input-group input-daterange">
-                <input class="text-black" type="text" placeholder="Name" class="form-control" formControlName="name">
-              </div>
-            </div>
-            <div class="col">
-              <div class="input-group input-daterange">
-                <input class="text-black" type="text" placeholder="Email" class="form-control" formControlName="email">
-              </div>
+            <div class="input-group input-daterange">
+              <input class="text-black" type="text" placeholder="Name" class="form-control" formControlName="name">
             </div>
           </div>
-          <div class="row justify-content-center">
-            <div class="text-center">
-              <button class="btn btn-primary" type="button" type="submit" (click)="submitUser()">
-                Submit
-              </button>
+          <div class="row">
+            <div class="input-group input-daterange">
+              <input class="text-black" type="text" placeholder="Email" class="form-control" formControlName="email">
             </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="text-center">
+            <button class="btn btn-primary" type="button" type="submit" (click)="submitUser()">
+              Submit
+            </button>
           </div>
         </div>
       </form>
@@ -58,7 +56,42 @@
       </button>
     </div>
     <div class="modal-body">
-      This is a modal.
+      <form role="form" [formGroup]="changePasswordForm">
+        <div class="form-group">
+          <div class="row">
+            <div class="input-group input-daterange">
+              <input class="text-black" type="text" placeholder="Email" class="form-control" formControlName="email">
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-group input-daterange">
+              <input class="text-black" [type]="hideOld ? 'password' : 'text'" placeholder="Old Password" class="form-control" formControlName="oldPassword">
+              <div class="input-group-append">
+                <button class="input-group-text" (click)="hideOld = !hideOld">
+                    <i [ngClass]="hideOld === true ? 'fas fa-eye' : 'far fa-eye-slash'" style="margin-left: 15px"></i>
+                </button>
+            </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-group input-daterange">
+              <input class="text-black" [type]="hideNew ? 'password' : 'text'" placeholder="New Password" class="form-control" formControlName="newPassword">
+              <div class="input-group-append">
+                <button class="input-group-text" (click)="hideNew = !hideNew">
+                    <i [ngClass]="hideNew === true ? 'fas fa-eye' : 'far fa-eye-slash'" style="margin-left: 15px"></i>
+                </button>
+            </div>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <div class="text-center">
+              <button class="btn btn-primary" type="button" type="submit" (click)="submitPassword()">
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   </ng-template>
 

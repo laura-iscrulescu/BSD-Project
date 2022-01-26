@@ -11,7 +11,11 @@ import { TokenStorageService } from 'src/app/_services/storage/token-storage.ser
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
-  private apiURL = environment.changeUser;
+  public hideNew = true
+  public hideOld = true
+  
+  private changeUserURL = environment.changeUser;
+  private changePasswdURL = environment.changePasswd;
   modals: {
     usernameRef?: BsModalRef;
     passwordRef?: BsModalRef;
@@ -21,6 +25,12 @@ export class SettingsComponent implements OnInit {
   changeUserNameForm = new FormGroup({    
     name: new FormControl(),
     email: new FormControl()
+  })
+
+  changePasswordForm = new FormGroup({    
+    email: new FormControl(),
+    oldPassword: new FormControl(),
+    newPassword: new FormControl()
   })
 
   constructor(private modalService: BsModalService, public tokenStorageService: TokenStorageService) { }
@@ -45,7 +55,37 @@ export class SettingsComponent implements OnInit {
         const options: AxiosRequestConfig = {
           method: 'POST',
           data: reqBody,
-          url: this.apiURL,
+          url: this.changeUserURL,
+          headers: {
+            Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+          }
+        };
+        let res = await axios(options);
+        if (res && res.status === 200) {
+          // TODO do something with response if needed
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+
+  async submitPassword(): Promise<void> {
+    const email = this.changePasswordForm.value.email
+    const oldPassword = this.changePasswordForm.value.oldPassword
+    const newPassword = this.changePasswordForm.value.newPassword
+
+    if(email && oldPassword && newPassword) {
+      const reqBody = {
+        email: email,
+        oldPassword: oldPassword,
+        newPassword: newPassword
+      }
+      try {
+        const options: AxiosRequestConfig = {
+          method: 'POST',
+          data: reqBody,
+          url: this.changePasswdURL,
           headers: {
             Authorization: `Bearer ${this.tokenStorageService.getToken()}`
           }
