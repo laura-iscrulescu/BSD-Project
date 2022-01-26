@@ -6,12 +6,9 @@ const router = express.Router();
 router.post("/add", async (req, res) => {
 	const category = req.body;
 
-    console.log(category)
-
 	if (category.user_id && category.name && category.color) {
         try {
             const newCategory = await db.category.addCategory(category);
-            console.log(newCategory)
             res.status(200).send(newCategory);
         } catch (err) {
             console.error(err);

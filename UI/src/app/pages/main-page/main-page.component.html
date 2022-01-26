@@ -83,7 +83,7 @@
           </div>
         </div>
         <div class="modal-body">
-          <form role="form" [formGroup]="transactionForm" (submit)="onSubmitTransaction()">
+          <form role="form" [formGroup]="transactionForm">
             <div class="form-group mb-3">
               <label>Product/service name</label>
               <div class="input-group input-group-alternative" [ngClass]="{'input-group-focus':focus1===true}">
@@ -116,8 +116,8 @@
                     <i class="tim-icons icon-key-25"> </i>
                   </span>
                 </div>
-                <input type="date" placeholder="Date" class="form-control" (focus)="focus3=true" (blur)="focus3=false"
-                  formControlName="date">
+                <input type="date" id="myDate" placeholder="Date" class="form-control" (focus)="focus3=true" (blur)="focus3=false"
+                  formControlName="date" value="Date()">
               </div>
             </div>
             <div class="form-group">
@@ -132,7 +132,7 @@
             </div>
             <div class="text-center">
               <button class="btn btn-primary my-4" type="button" type="submit"
-                (click)="onSubmitTransaction(); transactionModal.hide();">
+                (click)="onSubmitTransaction(); transactionModal.hide()">
                 Add
               </button>
             </div>
@@ -171,7 +171,7 @@
             </div>
             <div class="text-center">
               <button class="btn btn-primary my-4" type="button" type="submit"
-                (click)="onSubmitCategory(); categoryModal.hide()">
+                (click)="onSubmitCategory(); closeCategoryModal ? categoryModal.hide() : false">
                 Add
               </button>
             </div>

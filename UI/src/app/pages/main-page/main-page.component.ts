@@ -18,6 +18,7 @@ export class MainPageComponent implements OnInit {
   private allTransactionsURL = environment.allTransactions;
   private allCategoriesURL = environment.allCategories;
   private addTransactionURL = environment.addTransaction;
+  private addCategoryURL = environment.addCategory;
 
   private doguhnutChart = null;
 
@@ -75,19 +76,7 @@ export class MainPageComponent implements OnInit {
     // get data
     await this.getAllCategories();
     await this.getAllTransactions();
-    const groupedTransactions = _.groupBy(this.transactions, "category");
-    const groupedCategories = _.groupBy(this.categories, "name");
-    this.labelsDoughnut = Object.keys(groupedTransactions);
-    
-    for(const key in groupedTransactions) {
-      this.dataDoughtnut.push(_.sumBy(groupedTransactions[key], "value"));
-    }
-
-    for(const key in groupedTransactions) {
-      const category = groupedCategories[key][0]
-      this.doughtnutBackgroundColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 0.2)`)
-      this.doughtnutBorderColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 1)`)
-    }
+    this.updateChart();
 
     // charts
 
@@ -192,18 +181,8 @@ export class MainPageComponent implements OnInit {
         if (res && res.status === 200) {
           if (res.data) {
             this.transactions.push(res.data) 
-            const groupedTransactions = _.groupBy(this.transactions, "category");
-            let index = 0;
-            for(const key in groupedTransactions) {
-              if (key === res.data.category) {
-                this.dataDoughtnut[index] += res.data.value;
-                break;
-              }
-              index++;
-            }
-            if (this.doguhnutChart) {
-              this.doguhnutChart.update();
-            }
+            // this.updateTransactions(res.data);
+            this.updateChart();
           }
         }
       } catch (e) {
@@ -233,30 +212,20 @@ export class MainPageComponent implements OnInit {
         const options: AxiosRequestConfig = {
           method: 'POST',
           data: reqBody,
-          url: this.addTransactionURL,
+          url: this.addCategoryURL,
           headers: {
             Authorization: `Bearer ${this.tokenStorageService.getToken()}`
           }
         };
         console.log(options);
-        // let res = await axios(options);
-        // if (res && res.status === 200) {
-        //   if (res.data) {
-        //     this.transactions.push(res.data) 
-        //     const groupedTransactions = _.groupBy(this.transactions, "category");
-        //     let index = 0;
-        //     for(const key in groupedTransactions) {
-        //       if (key === res.data.category) {
-        //         this.dataDoughtnut[index] += res.data.value;
-        //         break;
-        //       }
-        //       index++;
-        //     }
-        //     if (this.doguhnutChart) {
-        //       this.doguhnutChart.update();
-        //     }
-        //   }
-        // }
+        let res = await axios(options);
+        if (res && res.status === 200) {
+          if (res.data) {
+            // console.log(res.data)
+            this.categories.push(res.data);
+            this.updateChart();
+          }
+        }
       } catch (e) {
         console.error(e);
       }
@@ -271,8 +240,8 @@ export class MainPageComponent implements OnInit {
     this.transactionForm = this.formBuilder.group({
       productName: [null, Validators.required],
       price: [null, Validators.required],
-      date: [null, Validators.required],
-      category: [null, Validators.required]
+      date: [new Date(), Validators.required],
+      category: [this.categories.length ? this.categories[0] : null, Validators.required]
     });
   }
 
@@ -324,6 +293,37 @@ export class MainPageComponent implements OnInit {
       }
     } catch (e) {
       console.error(e);
+    }
+  }
+
+  public updateChart(): void {
+    this.dataDoughtnut = []
+    this.doughtnutBackgroundColor = []
+    this.doughtnutBorderColor = []
+
+    const groupedTransactions = _.groupBy(this.transactions, "category");
+    const groupedCategories = _.groupBy(this.categories, "name");
+    this.labelsDoughnut = Object.keys(groupedTransactions);
+    
+    for(const key in groupedTransactions) {
+      this.dataDoughtnut.push(_.sumBy(groupedTransactions[key], "value"));
+    }
+
+    for(const key in groupedTransactions) {
+      const category = groupedCategories[key][0]
+      this.doughtnutBackgroundColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 0.2)`)
+      this.doughtnutBorderColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 1)`)
+    }
+
+    if (this.doguhnutChart) {
+      this.doguhnutChart.data.labels = this.labelsDoughnut;
+      this.doguhnutChart.data.datasets = [{
+          data: this.dataDoughtnut,
+          backgroundColor: this.doughtnutBackgroundColor,
+          borderColor: this.doughtnutBorderColor,
+          borderWidth: 1
+        }]
+      this.doguhnutChart.update();
     }
   }
 }
