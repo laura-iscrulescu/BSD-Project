@@ -90,12 +90,24 @@ func (a *authenticatorStruct) CheckToken(req CheckTokenReq) ([]byte, error, int)
 	}
 
 	// Check to see if the token exists
-	_, err = a.identityDB.GetKey(req.Token)
+	email, err := a.identityDB.GetKey(req.Token)
 	if err != nil {
 		return nil, err, http.StatusUnauthorized
 	}
 
-	return nil, nil, http.StatusOK
+	// Check to see if the user exists
+	user, err := a.mainDB.Get(email)
+	if err != nil {
+		return nil, errors.New("Unauthorized access"), http.StatusUnauthorized
+	}
+
+	// Transform user data into a string
+	userMarshaled, err := json.Marshal(user)
+	if err != nil {
+		return nil, err, http.StatusInternalServerError
+	}
+
+	return userMarshaled, nil, http.StatusOK
 }
 
 func (a *authenticatorStruct) GetTokens() ([]byte, error, int) {
