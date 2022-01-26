@@ -13,7 +13,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 
 @NgModule({
   declarations: [
@@ -26,13 +26,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     CommonModule,
     PagesRoutingModule,
     SharedModule,
-    BrowserAnimationsModule,
     NgChartsModule,
     PaginationModule.forRoot(),
     ModalModule.forRoot(),
     BsDatepickerModule.forRoot(),
     ReactiveFormsModule,
     FormsModule,
+    AccordionModule.forRoot(),
     NgxDatatableModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
