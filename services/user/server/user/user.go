@@ -133,7 +133,7 @@ func (u *userStruct) ChangePassword(req ChangePasswordReq) ([]byte, error, int) 
 	}
 
 	// Get the user from the database
-	user, err := u.mainDB.GetWithPassword(email)
+	user, err := u.mainDB.Get(email)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
@@ -145,7 +145,7 @@ func (u *userStruct) ChangePassword(req ChangePasswordReq) ([]byte, error, int) 
 
 	// Update user Password
 	user.Password = req.NewPassword
-	err = u.mainDB.UpdateWithPassword(user)
+	err = u.mainDB.Update(user)
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
 	}
