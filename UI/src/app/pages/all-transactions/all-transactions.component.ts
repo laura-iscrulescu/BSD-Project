@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { Transaction } from '../models/transactions.model';
 import { ColumnMode } from "@swimlane/ngx-datatable"
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-all-transactions',
@@ -116,5 +117,9 @@ export class AllTransactionsComponent implements OnInit {
         })
       }
       this.transactions = filteredTransactions
+  }
+
+  formatDate(date): string {
+    return moment(date).format("DD/MM/YYYY")
   }
 }
