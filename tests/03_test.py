@@ -3,8 +3,26 @@
 import requests
 import json
 
+def get_token():
+    response = requests.post('http://localhost:8001/authenticator/password',json={'email' : 'test8', 'password' : 'test'})
+    json_response = response.json()
+    resp = json.loads(json_response['Resp'])
+    # print(resp['token'])
+    return resp
+
+def get_token2():
+    response = requests.post('http://localhost:8001/authenticator/password',json={'email' : 'test8', 'password' : 'test2'})
+    json_response = response.json()
+    resp = json.loads(json_response['Resp'])
+    # print(resp['token'])
+    return resp    
+
+def single_logout(resp):
+    response = requests.post('http://localhost:8001/authenticator/single',headers={'authorization' : 'Bearer ' + resp['token']})
+    
+
 def test_register():
-    response = requests.post('http://localhost:8002/register',json={'email' : 'test', 'password' : 'test', 'name' : 'test'})
+    response = requests.post('http://localhost:8002/user/register',json={'email' : 'test8', 'password' : 'test', 'name' : 'test8'})
     json_response = response.json()
     print(json_response)
     print(response.status_code)
@@ -12,53 +30,47 @@ def test_register():
 
 
 def test_get():
-    response = requests.post('http://localhost:8002/get',json={'email' : 'test'})
+    resp = get_token()
+    response = requests.post('http://localhost:8002/user/get',headers={'authorization' : 'Bearer ' + resp['token']})
     json_response = response.json()
     print(json_response)
     print(response.status_code)
     assert response.status_code == 200, response.text
+    single_logout(resp)
 
 
 def test_changePasswd():
-    response = requests.post('http://localhost:8002/change/password',json={'email' : 'test', 'oldPassword' : 'test', 'newPassword' : 'newtest'})
+    resp = get_token()
+    response = requests.post('http://localhost:8002/user/change/password',json={'oldPassword' : 'test','newPassword' : 'test2'}, headers={'authorization' : 'Bearer ' + resp['token']})
     json_response = response.json()
     print(json_response)
     print(response.status_code)
     assert response.status_code == 200, response.text
+    single_logout(resp)
 
 
 def test_changeName():
-    response = requests.post('http://localhost:8002/change/name',json={'email' : 'test', 'name' : 'Test'})
+    resp = get_token2()
+    response = requests.post('http://localhost:8002/user/change/name',json={'name' : 'Test'},headers={'authorization' : 'Bearer ' + resp['token']})
     json_response = response.json()
     print(json_response)
     print(response.status_code)
     assert response.status_code == 200, response.text
+    single_logout(resp)
 
 def test_changeGoal():
-    response = requests.post('http://localhost:8002/change/goal',json={'email' : 'test'})
+    resp = get_token2()
+    response = requests.post('http://localhost:8002/user/change/goal',json={'goal' : 10},headers={'authorization' : 'Bearer ' + resp['token']})
     json_response = response.json()
     print(json_response)
     print(response.status_code)
     assert response.status_code == 200, response.text
+    single_logout(resp)
 
 
 def test_delete():
-    response = requests.post('http://localhost:8002/delete',json={'email' : 'test'})
-    json_response = response.json()
-    print(json_response)
-    print(response.status_code)
-    assert response.status_code == 200, response.text
-
-def test_addCategory():
-    response = requests.post('http://localhost:8002/category/add',json={'email' : 'test', 'category' : 'new-category'})
-    json_response = response.json()
-    print(json_response)
-    print(response.status_code)
-    assert response.status_code == 200, response.text
-
-
-def test_removeCategory():
-    response = requests.post('http://localhost:8002/category/remove',json={'email' : 'test', 'category' : 'new-category'})
+    resp = get_token2()
+    response = requests.post('http://localhost:8002/user/delete',json={'password' : 'test2'}, headers={'authorization' : 'Bearer ' + resp['token']})
     json_response = response.json()
     print(json_response)
     print(response.status_code)
