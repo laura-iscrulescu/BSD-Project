@@ -15,7 +15,7 @@ import (
 )
 
 type MainDB interface {
-	Get(username string) (*UserModel, error)
+	Get(email string) (*UserModel, error)
 }
 
 type mainDBStruct struct {

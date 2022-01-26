@@ -95,6 +95,8 @@ func (a *authenticatorStruct) CheckToken(req CheckTokenReq) ([]byte, error, int)
 		return nil, err, http.StatusUnauthorized
 	}
 
+	a.log.Info("The email: " + email)
+
 	// Check to see if the user exists
 	user, err := a.mainDB.Get(email)
 	if err != nil {

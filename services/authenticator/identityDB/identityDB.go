@@ -124,7 +124,7 @@ func (i *identityDBStruct) GetKey(value string) (string, error) {
 
 		if valueInIDB == value {
 			keyList := strings.Split(keyWithCounter, ".")
-			return strings.Join(keyList[:len(keyList)-1], ""), nil
+			return strings.Join(keyList[:len(keyList)-1], "."), nil
 		}
 	}
 
