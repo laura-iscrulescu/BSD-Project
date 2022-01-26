@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Chart, ChartItem } from 'chart.js';
-import { Category } from '../models/category.model';
 import axios, { AxiosRequestConfig } from 'axios';
 import { UserIDStorageService } from 'src/app/_services/storage/userId-storage.service';
 import { environment } from '../../../environments/environment'
