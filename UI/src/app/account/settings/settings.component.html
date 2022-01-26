@@ -1,1 +1,108 @@
-<p>settings works!</p>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-5 mx-auto">
+            <button type="button" class="btn btn-info btn-block" (click)="openModal(templateUsername, 'usernameRef')">Change username</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-5 mx-auto">
+            <button type="button" class="btn btn-warning btn-block" (click)="openModal(templatePassword, 'passwordRef')">Change password</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-5 mx-auto">
+            <button type="button" class="btn btn-success btn-block" (click)="openModal(templateGoal, 'goalRef')">Change monthly goal</button>
+        </div>
+    </div>
+</div>
+
+<ng-template #templateUsername>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Change Username</h4>
+      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="this.modals.usernameRef?.hide()">
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form role="form" [formGroup]="changeUserNameForm">
+        <div class="form-group">
+          <div class="row">
+            <div class="input-group input-daterange">
+              <input class="text-black" type="text" placeholder="Name" class="form-control" formControlName="name">
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-group input-daterange">
+              <input class="text-black" type="text" placeholder="Email" class="form-control" formControlName="email">
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="text-center">
+            <button class="btn btn-primary" type="button" type="submit" (click)="submitUser()">
+              Submit
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+
+  <ng-template #templatePassword>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Change Password</h4>
+      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="this.modals.passwordRef?.hide()">
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form role="form" [formGroup]="changePasswordForm">
+        <div class="form-group">
+          <div class="row">
+            <div class="input-group input-daterange">
+              <input class="text-black" type="text" placeholder="Email" class="form-control" formControlName="email">
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-group input-daterange">
+              <input class="text-black" [type]="hideOld ? 'password' : 'text'" placeholder="Old Password" class="form-control" formControlName="oldPassword">
+              <div class="input-group-append">
+                <button class="input-group-text" (click)="hideOld = !hideOld">
+                    <i [ngClass]="hideOld === true ? 'fas fa-eye' : 'far fa-eye-slash'" style="margin-left: 15px"></i>
+                </button>
+            </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-group input-daterange">
+              <input class="text-black" [type]="hideNew ? 'password' : 'text'" placeholder="New Password" class="form-control" formControlName="newPassword">
+              <div class="input-group-append">
+                <button class="input-group-text" (click)="hideNew = !hideNew">
+                    <i [ngClass]="hideNew === true ? 'fas fa-eye' : 'far fa-eye-slash'" style="margin-left: 15px"></i>
+                </button>
+            </div>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <div class="text-center">
+              <button class="btn btn-primary" type="button" type="submit" (click)="submitPassword()">
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+
+  <ng-template #templateGoal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Change monthly goal</h4>
+      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="this.modals.goalRef?.hide()">
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      This is a modal.
+    </div>
+  </ng-template>

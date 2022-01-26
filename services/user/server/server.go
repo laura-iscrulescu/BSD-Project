@@ -68,6 +68,12 @@ func (s *serverStruct) Listen() error {
 	http.HandleFunc("/user/register", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "REGISTER: "
 
+		s.enableCors(writer)
+		if req.Method == "OPTIONS" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
+
 		var reqBody user.RegisterReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
@@ -83,6 +89,12 @@ func (s *serverStruct) Listen() error {
 	http.HandleFunc("/user/activate", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "ACTIVATE: "
 
+		s.enableCors(writer)
+		if req.Method == "OPTIONS" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
+
 		var reqBody user.ActivateReq
 		err := json.NewDecoder(req.Body).Decode(&reqBody)
 		if err != nil {
@@ -97,6 +109,12 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/get", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "GET: "
+
+		s.enableCors(writer)
+		if req.Method == "OPTIONS" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
 
 		fullToken := req.Header.Get("Authorization")
 		if fullToken == "" {
@@ -115,6 +133,12 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/change/password", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHANGE PASSWORD: "
+
+		s.enableCors(writer)
+		if req.Method == "OPTIONS" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
 
 		fullToken := req.Header.Get("Authorization")
 		if fullToken == "" {
@@ -140,6 +164,12 @@ func (s *serverStruct) Listen() error {
 	http.HandleFunc("/user/change/name", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHANGE NAME: "
 
+		s.enableCors(writer)
+		if req.Method == "OPTIONS" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
+
 		fullToken := req.Header.Get("Authorization")
 		if fullToken == "" {
 			errMessage := "The token was not provided"
@@ -163,6 +193,12 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/change/goal", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CHANGE MONTHLY GOAL: "
+
+		s.enableCors(writer)
+		if req.Method == "OPTIONS" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
 
 		fullToken := req.Header.Get("Authorization")
 		if fullToken == "" {
@@ -188,6 +224,12 @@ func (s *serverStruct) Listen() error {
 	http.HandleFunc("/user/delete", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "DELETE: "
 
+		s.enableCors(writer)
+		if req.Method == "OPTIONS" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
+
 		fullToken := req.Header.Get("Authorization")
 		if fullToken == "" {
 			errMessage := "The token was not provided"
@@ -211,6 +253,12 @@ func (s *serverStruct) Listen() error {
 
 	http.HandleFunc("/user/category/add", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "CREATE CATEGORY: "
+
+		s.enableCors(writer)
+		if req.Method == "OPTIONS" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
 
 		fullToken := req.Header.Get("Authorization")
 		if fullToken == "" {
@@ -236,6 +284,12 @@ func (s *serverStruct) Listen() error {
 	http.HandleFunc("/user/category/remove", func(writer http.ResponseWriter, req *http.Request) {
 		errPrefix := "DELETE CATEGORY: "
 
+		s.enableCors(writer)
+		if req.Method == "OPTIONS" {
+			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
+			return
+		}
+
 		fullToken := req.Header.Get("Authorization")
 		if fullToken == "" {
 			errMessage := "The token was not provided"
@@ -259,6 +313,13 @@ func (s *serverStruct) Listen() error {
 
 	s.log.Info("Listen HTTP on " + s.addr + ":" + s.port)
 	return server.ListenAndServe()
+}
+
+func (s *serverStruct) enableCors(writer http.ResponseWriter) {
+	writer.Header().Add("Access-Control-Allow-Origin", "*")
+	writer.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	writer.Header().Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Requested-With")
+	writer.Header().Add("Content-Type", "application/json")
 }
 
 func (s *serverStruct) sendResponse(writer http.ResponseWriter, errPrefix string, resp []byte, err error, code int) {

@@ -18,6 +18,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ExpansionPanelComponent } from './category-analysis/expansion-panel/expansion-panel.component';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @NgModule({
   declarations: [
@@ -40,8 +41,9 @@ import { ExpansionPanelComponent } from './category-analysis/expansion-panel/exp
     BsDropdownModule.forRoot(),
     MatSelectModule,
     CollapseModule,
-    AccordionModule,
-    MatExpansionModule
+    MatExpansionModule,
+    AccordionModule.forRoot(),
+    NgxDatatableModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

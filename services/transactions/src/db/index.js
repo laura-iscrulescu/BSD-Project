@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const CATEGORY = require("./categories");
 const TRANSACTION = require("./transaction");
 
 async function connect (URI, options) {
@@ -12,7 +13,8 @@ async function connect (URI, options) {
 
 const DB = {
 	connect,
-	transaction: TRANSACTION
+	transaction: TRANSACTION,
+	category: CATEGORY
 };
 
 module.exports = DB;

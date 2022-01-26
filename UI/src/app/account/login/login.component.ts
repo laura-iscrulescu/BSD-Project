@@ -2,13 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import axios, { AxiosRequestConfig } from 'axios';
+import { environment } from '../../../environments/environment'
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  private apiURL = environment.loginURL;
   public hide = true;
   public isCollapsed = true;
   public focus: boolean;
@@ -28,31 +30,39 @@ export class LoginComponent implements OnInit {
       email: [null, [Validators.required, Validators.email]],
       password: [null, Validators.required]
     });
+
+    this.loginForm.get('email').setValue('test2@test.com');
+    this.loginForm.get('password').setValue('test2');
   }
 
-  public onSubmit (): void {
-    console.log(this.loginForm);
-
+  public async onSubmit (): Promise<void> {
     if (this.loginForm.valid) {
-      console.log('valid');
       const reqBody = {
         email: this.loginForm.value.email,
         password: this.loginForm.value.password
       };
-      console.log(reqBody);
+            
+      try {
+        const options: AxiosRequestConfig = {
+          method: 'POST',
+          data: reqBody,
+          url: this.apiURL
+        };
+        let res = await axios(options);
+        if (res && res.status === 200) {
+          if (res.data.Code === 200) {
+            const response = JSON.parse(res.data.Resp);
 
-      // to delete after backend
-      this.router.navigate(['transactions/home']);
-
-      // const res = this.http.post<any>('http://localhost:3000/api/v1/users/login', reqBody).subscribe((data) => {
-      //   localStorage.setItem('userRole', data.response.role);
-      //   localStorage.setItem('userToken', data.response.token);
-      //   localStorage.setItem('lang', 'EN');
-      //   // console.log(localStorage.getItem('userRole'));
-      //   // console.log(localStorage.getItem('userToken'));
-
-      //   this.router.navigate(['home']);
-      // });
+            localStorage.setItem('userToken', response.token);
+            localStorage.setItem('userId', response.user_id)
+            localStorage.setItem('lang', 'EN');
+            
+            this.router.navigate(['transactions', 'home']);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
     } else {
       console.log('invalid');
     }

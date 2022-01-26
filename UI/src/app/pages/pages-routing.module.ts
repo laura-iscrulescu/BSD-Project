@@ -8,33 +8,16 @@ import { PredictionsComponent } from './predictions/predictions.component';
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: '',
     component: GeneralLayoutComponent,
     children: [
-      { path: '', component: MainPageComponent }
+      { path: 'home', component: MainPageComponent },
+      { path: 'all-transactions', component: AllTransactionsComponent },
+      { path: 'predictions', component: PredictionsComponent },
+      { path: 'category-analysis', component: CategoryAnalysisComponent }
     ]
   },
-  {
-    path: 'all-transactions',
-    component: GeneralLayoutComponent,
-    children: [
-      { path: '', component: AllTransactionsComponent }
-    ]
-  },
-  {
-    path: 'predictions',
-    component: GeneralLayoutComponent,
-    children: [
-      { path: '', component: PredictionsComponent }
-    ]
-  },
-  {
-    path: 'category-analysis',
-    component: GeneralLayoutComponent,
-    children: [
-      { path: '', component: CategoryAnalysisComponent }
-    ]
-  }
+  {path: '', redirectTo: 'home'}
 ];
 
 @NgModule({

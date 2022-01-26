@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import axios, { AxiosRequestConfig } from 'axios';
+import { environment } from '../../../environments/environment'
 
 @Component({
   selector: 'app-register',
@@ -9,6 +11,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  private apiURL = environment.registerURL;
   public isCollapsed = true;
   public focus: boolean;
   public focus1: boolean;
@@ -36,19 +39,31 @@ export class RegisterComponent implements OnInit {
     }, { validators: this.checkPasswords });
   }
 
-  public onSubmit (): void {
-    console.log(this.registerForm);
-
+  public async onSubmit (): Promise<void> {
     if (this.registerForm.valid) {
       const reqBody = {
-        fullName: this.registerForm.value.fullName,
+        name: this.registerForm.value.fullName,
         password: this.registerForm.value.password,
         email: this.registerForm.value.email
       };
-      console.log(reqBody);
+      
+      try {
+        const options: AxiosRequestConfig = {
+          method: 'POST',
+          data: reqBody,
+          url: this.apiURL
+        };
 
-      // const res = this.http.post<any>('http://localhost:3000/api/v1/users/add', reqBody).subscribe(
-      //   (data) => this.router.navigate(['login']));
+        let res = await axios(options);
+
+        if (res && res.status === 200) {
+          if (res.data.Code === 200) {
+            this.router.navigate(['account', 'login']);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 

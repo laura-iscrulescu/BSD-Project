@@ -1,3 +1,13 @@
 export const environment = {
-  production: true
+  production: true,
+  registerURL: "http://localhost:8080/user/register",
+  loginURL: "http://localhost:8080/authenticator/password",
+  authenticator: "http://localhost:8080/authenticator",
+  allTransactions: "http://localhost:8080/api/v1/transactions",
+  allCategories: "http://localhost:8080/api/v1/categories",
+  addTransaction: "http://localhost:8080/api/v1/transactions/add",
+  addCategory: "http://localhost:8080/api/v1/categories/add",
+  deleteTransaction: "http://localhost:8080/api/v1/transactions/delete",
+  changePasswd: "http://localhost:8080/user/change/password",
+  changeUser: "http://localhost:8080/user/change/name"
 };

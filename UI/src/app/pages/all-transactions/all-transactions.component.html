@@ -1,32 +1,77 @@
-<div class="container">
-  <table class="table custom-table-style">
-    <thead>
-      <tr>
-        <th class="text-center">#</th>
-        <th>Product Name</th>
-        <th>Date</th>
-        <th>Price</th>
-        <th class="text-right">Category</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let transaction of transactions; let i = index">
-        <td class="text-center">{{ i + 1}}</td>
-        <td>{{ transaction.productName }}</td>
-        <td>{{ transaction.date }}</td>
-        <td>{{ transaction.price }}</td>
-        <td class="td-actions text-right">
-          <span class=" badge badge-primary">
-                {{ transaction.category }}
-          </span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-    <nav>
-        <pagination class="justify-content-center" (ngModel)="currentPage"
-        [totalItems]="transactions.length" (pageChanged)="pageChanged($event)"
-        [itemsPerPage]="1">
-        </pagination>
-    </nav>
-</div>;
+<div class="container mt-5">
+  <form role="form" [formGroup]="valueForm">
+    <div class="form-group">
+      <label>Date</label>
+      <div class="row">
+        <div class="col-4">
+          <div class="input-group input-daterange">
+            <input type="date" placeholder="Date" class="form-control" formControlName="lowerDate" (change)="checkDates()">
+          </div>
+        </div>
+        <div class="col-1">
+          TO
+        </div>
+        <div class="col-4">
+          <div class="input-group input-daterange">
+            <input type="date" placeholder="Date" class="form-control" formControlName="upperDate" (change)="checkDates()">
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="text-center">
+            <button class="btn btn-primary" type="button" type="submit" (click)="filterElems();">
+              Filter
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="input-group input-daterange">
+            <input type="text" placeholder="Lower Value" class="form-control" formControlName="lowerValue">
+          </div>
+        </div>
+        <div class="col">
+          <div class="input-group input-daterange">
+            <input type="text" placeholder="Upper Value" class="form-control" formControlName="upperValue">
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <ngx-datatable id="custom-ngx-datatable" [rows]="transactions" [loadingIndicator]="loadingIndicator"
+    [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="40" [limit]="10" rowHeight="auto"
+    [reorderable]="reorderable">
+    <!-- <ngx-datatable-column name="#" [width]="10">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{this.transactions.indexOf(row)}}
+      </ng-template>
+    </ngx-datatable-column> -->
+    <ngx-datatable-column name="Product Name" prop="productName" [width]="400">
+      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+        {{value}}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Date" prop="date" [width]="200">
+      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+        {{formatDate(value)}}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Price" prop="price" [width]="100">
+      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+        {{value}}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Category" prop="category" [width]="100">
+      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+        <span class=" badge badge-primary w-100">
+          {{value}}
+        </span>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Actions" prop="_id" [width]="10" [sortable]="false">
+      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+        <i class="fas fa-trash text-danger" (click)="deleteTransaction(value)" id="delete-transaction-icon"></i>
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
+</div>

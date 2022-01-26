@@ -12,8 +12,8 @@ const TRANSACTION = {
 			fields: {
 				_id: true,
 				user_id: true,
+				name: true,
 				value: true,
-                currency: true,
                 category: true,
                 date: true
 			}
@@ -27,8 +27,8 @@ const TRANSACTION = {
 		}, {
 			_id: true,
 			user_id: true,
+			name: true,
             value: true,
-            currency: true,
             category: true,
             date: true
 		});
@@ -41,8 +41,8 @@ const TRANSACTION = {
 		}, {
 			_id: true,
             user_id: true,
+			name: true,
             value: true,
-            currency: true,
             category: true,
             date: true
 		}).exec();
@@ -63,8 +63,8 @@ const TRANSACTION = {
         }, {
 			_id: true,
             user_id: true,
+			name: true,
             value: true,
-            currency: true,
             category: true,
             date: true
 		}).exec();
