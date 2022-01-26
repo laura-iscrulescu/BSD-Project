@@ -16,6 +16,7 @@ import * as moment from 'moment';
 })
 export class AllTransactionsComponent implements OnInit {
   private apiURL = environment.allTransactions;
+  private deleteTransactionURL = environment.deleteTransaction;
   public transactions = []
   public copyTransactions = []
 
@@ -63,13 +64,15 @@ export class AllTransactionsComponent implements OnInit {
         this.transactions = [];
         for (const transaction of res.data) {
           this.transactions.push(new Transaction(
+            transaction._id,
             transaction.name,
             transaction.date,
             transaction.value,
             transaction.category
           ));
         }
-        this.copyTransactions = this.transactions
+        this.copyTransactions = JSON.parse(JSON.stringify(this.transactions));
+        console.log(res.data);
       }
     } catch (e) {
       console.error(e);
@@ -121,5 +124,30 @@ export class AllTransactionsComponent implements OnInit {
 
   formatDate(date): string {
     return moment(date).format("DD/MM/YYYY")
+  }
+
+  async deleteTransaction(transactionId): Promise<void> {
+
+    try {
+      const options: AxiosRequestConfig = {
+        method: 'POST',
+        data: {
+          transactionId
+        },
+        url: this.deleteTransactionURL,
+        headers: {
+          Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+        }
+      };
+      let res = await axios(options);
+      if (res && res.status === 200) {
+        if (res.data) {
+          this.transactions = this.transactions.filter((transaction) => transaction._id !== transactionId);
+        }
+      }
+
+    } catch (err) {
+      console.error(err);
+    }
   }
 }

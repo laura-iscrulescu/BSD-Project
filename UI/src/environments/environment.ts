@@ -10,8 +10,9 @@ export const environment = {
   allTransactions: "http://localhost:8080/api/v1/transactions",
   allCategories: "http://localhost:8080/api/v1/categories",
   addTransaction: "http://localhost:8080/api/v1/transactions/add",
-  addCategory: "http://localhost:8080/api/v1/categories/add",
-  changeUser: "http://localhost:8080/user/change/name"
+  changeUser: "http://localhost:8080/user/change/name",
+  deleteTransaction: "http://localhost:8080/api/v1/transactions/delete",
+  addCategory: "http://localhost:8080/api/v1/categories/add"
 };
 
 /*
