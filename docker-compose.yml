@@ -1,10 +1,20 @@
 version: "3.9"
 services:
-  web:
+  nginx-frontend:
+    container_name: nginx-frontend
+    build:
+      dockerfile: ./Docker/Dockerfile
+      context: ./UI
+    ports:
+      - "8090:80"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.7
+  nginx-backend:
     image: nginx
-    container_name: nginx-web
+    container_name: nginx-backend
     volumes:
-      - ./templates:/etc/nginx/templates
+      - ./services/nginx-templates:/etc/nginx/templates
     ports:
       - "8080:80"
     depends_on:
@@ -26,7 +36,7 @@ services:
     container_name: authenticator
     build:
       dockerfile: Dockerfile
-      context: ./authenticator
+      context: ./services/authenticator
     depends_on:
       - redis
     environment:
@@ -38,7 +48,7 @@ services:
       MONGO_DATABASE: "bsdDB"
       MONGO_COLLECTION: "users"
     env_file:
-      - config.env
+      - ./services/config.env
     ports:
       - "8001:8001"
     networks:
@@ -48,7 +58,7 @@ services:
     container_name: user
     build:
       dockerfile: Dockerfile
-      context: ./user
+      context: ./services/user
     environment:
       SERVER_ADDR: "10.10.0.3"
       SERVER_PORT: "8002"
@@ -57,7 +67,7 @@ services:
       MONGO_DATABASE: "bsdDB"
       MONGO_COLLECTION: "users"
     env_file:
-      - config.env
+      - ./services/config.env
     depends_on:
       - redis
     ports:
@@ -69,11 +79,11 @@ services:
     container_name: transactions
     build:
       dockerfile: Dockerfile
-      context: ./transactions
+      context: ./services/transactions
     environment:
       MONGO_URI: mongodb+srv://cluster0.dd7vb.mongodb.net
     env_file:
-      - config.env
+      - ./services/config.env
     depends_on:
       - redis
     ports:
