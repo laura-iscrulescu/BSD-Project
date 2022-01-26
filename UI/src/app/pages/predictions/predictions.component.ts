@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Chart, ChartItem } from 'chart.js';
+import axios, { AxiosRequestConfig } from 'axios';
+import { Chart } from 'chart.js';
+import * as moment from 'moment-timezone';
 import regression from 'regression';
+import { TokenStorageService } from 'src/app/_services/storage/token-storage.service';
+import { UserIDStorageService } from 'src/app/_services/storage/userId-storage.service';
+import { environment } from 'src/environments/environment';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-predictions',
@@ -8,28 +14,60 @@ import regression from 'regression';
   styleUrls: ['./predictions.component.scss']
 })
 export class PredictionsComponent implements OnInit {
-  public labelsLine = [
-    'JAN',
-    'FEB',
-    'MAR',
-    'APR',
-    'MAY',
-    'JUN',
-    'JUL',
-    'AUG',
-    'SEP',
-    'OCT',
-    'NOV',
-    'DEC'
-  ];
+  private allTransactionsURL = environment.allTransactions;
+  public labelsLine = [];
 
-  public dataLine:Array<number> = [80, 160, 200, 160, 250, 280, 220, 190, 200, 250, 290, 320];
+  public dataLine:Array<number> = [];
 
-  constructor () { }
+  constructor (public tokenStorageService: TokenStorageService, public userIDStorageService: UserIDStorageService) { }
 
-  ngOnInit (): void {
+  async ngOnInit (): Promise<void> {
     const canvas: any = document.getElementById('predictionChart');
     const ctx = canvas.getContext('2d');
+
+    this.labelsLine = []
+    for (const month = moment().subtract(12, 'months'); month.isSameOrBefore(moment()); month.add(1, 'month')) {
+      this.labelsLine.push(month.format('MMM/YY'));
+    }
+
+    const reqBody = {
+      user_id: this.userIDStorageService.getUserId()
+    }
+    try {
+      const options: AxiosRequestConfig = {
+        method: 'POST',
+        data: reqBody,
+        url: this.allTransactionsURL,
+        headers: {
+          Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+        }
+      };
+      let res = await axios(options);
+      if (res && res.status === 200) {
+        const transactions = res.data;
+        const groupedTransactions = _.groupBy(transactions, transaction => moment(transaction.date).format('MMM/YY'));
+        this.dataLine = []
+        for (const key of this.labelsLine) {
+          if (groupedTransactions[key]) {
+            this.dataLine.push(_.sumBy(groupedTransactions[key], 'value'));
+          } else {
+            this.dataLine.push(0);
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    if (this.dataLine.length === 0) {
+      for (let i = 0; i < this.labelsLine.length; i++) {
+        this.dataLine.push(0);
+      }
+    }
+
+    for (const month = moment().add(1, 'month'); month.isSameOrBefore(moment().add(5, 'months')); month.add(1, 'month')) {
+      this.labelsLine.push(month.format('MMM/YY'));
+    }
 
     const aggregatedData = [];
     this.dataLine.forEach((data, index) => {
@@ -41,8 +79,6 @@ export class PredictionsComponent implements OnInit {
     reg.points.forEach((val) => predictedData.push(val[1]));
     this.dataLine.push(predictedData[0]);
     predictedData = [...Array(this.dataLine.length - 1), ...predictedData.slice(0, 6)];
-
-    this.labelsLine = this.labelsLine.concat(this.labelsLine.slice(0, 6));
 
     const gradientFill = ctx.createLinearGradient(0, 350, 0, 50);
     gradientFill.addColorStop(0, 'rgba(228, 76, 196, 0.0)');
