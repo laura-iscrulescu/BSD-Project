@@ -6,5 +6,7 @@ export const environment = {
   allTransactions: "http://localhost:8080/api/v1/transactions",
   allCategories: "http://localhost:8080/api/v1/categories",
   addTransaction: "http://localhost:8080/api/v1/transactions/add",
-  addCategory: "http://localhost:8080/api/v1/categories/add"
+  addCategory: "http://localhost:8080/api/v1/categories/add",
+  deleteTransaction: "http://localhost:8080/api/v1/transactions/delete",
+  changePasswd: "http://localhost:8080/user/change/password"
 };
