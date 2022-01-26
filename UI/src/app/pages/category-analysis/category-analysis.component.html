@@ -1,1 +1,52 @@
-<p>category-analysis works!</p>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-8">
+            <div class="container">
+                <form role="form">
+                    <div class="form-group" [formGroup]="this.myForm">
+                        <label>Category</label>
+                        <div class="input-group input-group-alternative">
+                          <select class="form-control"  placeholder="Category" formControlName="category" (change)="selectChange()">
+                            <option value="" selected disabled>Choose a category</option>
+                            <option *ngFor="let category of this.categories" [ngValue]="category.name">{{category.name}}</option>
+                          </select>
+                        </div>
+                    </div> 
+                </form>
+            </div>
+   
+            <accordion [closeOthers]="true" [isAnimated]="true">
+                <accordion-group [heading]="item.label" *ngFor="let item of this.accordionElements; let i = index">
+                    <ngx-datatable
+                    id="custom-ngx-datatable"
+                    [rows]="item.transactions"
+                    columnMode="force"
+                    [headerHeight]="40"
+                    [footerHeight]="40"
+                    rowHeight="auto"
+                  >
+                    <ngx-datatable-column name="Product Name" prop="name">
+                      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+                        {{value}}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Date" prop="date">
+                      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+                        {{formatDate(value)}}
+                      </ng-template>
+                    </ngx-datatable-column>
+                    <ngx-datatable-column name="Price" prop="value">
+                      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+                        {{value}}
+                      </ng-template>
+                    </ngx-datatable-column>
+                
+                  </ngx-datatable>
+                </accordion-group>
+            </accordion>
+        </div>
+        <div class="col-4">
+            <p>grafic</p>
+        </div>
+    </div>
+</div>
