@@ -5,6 +5,11 @@ services:
     build:
       dockerfile: ./Docker/Dockerfile
       context: ./UI
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
     ports:
       - "8090:80"
     networks:
@@ -13,6 +18,11 @@ services:
   nginx-backend:
     image: nginx
     container_name: nginx-backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
     volumes:
       - ./services/nginx-templates:/etc/nginx/templates
     ports:
@@ -27,6 +37,11 @@ services:
   redis:
     container_name: redis
     image: "redis:alpine"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
     ports:
       - "6379:6379"
     networks:
@@ -37,6 +52,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./services/authenticator
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
     depends_on:
       - redis
     environment:
@@ -59,6 +79,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./services/user
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
     environment:
       SERVER_ADDR: "10.10.0.3"
       SERVER_PORT: "8002"
@@ -80,6 +105,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./services/transactions
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
     environment:
       MONGO_URI: mongodb+srv://cluster0.dd7vb.mongodb.net
     env_file:
