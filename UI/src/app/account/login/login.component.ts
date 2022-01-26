@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import axios, { AxiosRequestConfig } from 'axios';
-import { environment } from '../../../environments/environment'
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -41,22 +41,23 @@ export class LoginComponent implements OnInit {
         email: this.loginForm.value.email,
         password: this.loginForm.value.password
       };
-            
+
       try {
         const options: AxiosRequestConfig = {
           method: 'POST',
           data: reqBody,
           url: this.apiURL
         };
-        let res = await axios(options);
+        const res = await axios(options);
+        console.log(res);
         if (res && res.status === 200) {
           if (res.data.Code === 200) {
             const response = JSON.parse(res.data.Resp);
 
             localStorage.setItem('userToken', response.token);
-            localStorage.setItem('userId', response.user_id)
+            localStorage.setItem('userId', response.user_id);
             localStorage.setItem('lang', 'EN');
-            
+
             this.router.navigate(['transactions', 'home']);
           }
         }

@@ -159,26 +159,15 @@ export class CategoryAnalysisComponent implements OnInit {
       gradientFill.addColorStop(0, 'rgba(228, 76, 196, 0.0)');
       gradientFill.addColorStop(1, 'rgba(228, 76, 196, 0.14)');
       this.lineChart = new Chart(canvas, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: this.labelsLine,
           datasets: [
             {
               label: 'Total money spent in this category',
-              fill: true,
               backgroundColor: gradientFill,
               borderColor: '#e44cc4',
               borderWidth: 2,
-              borderDash: [],
-              borderDashOffset: 0.0,
-              pointBackgroundColor: '#e44cc4',
-              pointBorderColor: 'rgba(255,255,255,0)',
-              pointHoverBackgroundColor: '#be55ed',
-              pointHoverBorderColor: 'rgba(35,46,55,1)',
-              pointBorderWidth: 20,
-              pointHoverRadius: 4,
-              pointHoverBorderWidth: 15,
-              pointRadius: 4,
               data: this.dataLine
             }
           ]
@@ -263,14 +252,14 @@ export class CategoryAnalysisComponent implements OnInit {
       });
     }
 
-    this.updateLineChart();
+    this.updateLineChart(category);
   }
 
   formatDate (date): string {
     return moment(date).format('DD/MM/YYYY');
   }
 
-  public updateLineChart (): void {
+  public updateLineChart (category): void {
     this.labelsLine = [];
     this.dataLine = [];
 
@@ -278,7 +267,9 @@ export class CategoryAnalysisComponent implements OnInit {
       this.labelsLine.push(month.format('MM/YY'));
     }
 
-    const groupedTransactions = _.groupBy(this.transactions, transaction => moment(transaction.date).format('MM/YY'));
+    const transactionsByCategory = this.transactions.filter((trans) => trans.category === category);
+
+    const groupedTransactions = _.groupBy(transactionsByCategory, transaction => moment(transaction.date).format('MM/YY'));
 
     for (const key of this.labelsLine) {
       const dailyTransactions = groupedTransactions[key];
@@ -288,6 +279,9 @@ export class CategoryAnalysisComponent implements OnInit {
         this.dataLine.push(0);
       }
     }
+
+    console.log(this.dataLine);
+    console.log(this.labelsLine);
 
     if (this.lineChart) {
       this.lineChart.data.labels = this.labelsLine;

@@ -17,14 +17,9 @@
   </div>
 </div> -->
 <div class="container mt-5">
-    <div class="row" style="margin-top: 25px">
-        <div class="col">
-            <div class="chart-area" ><canvas id="lineChart"> </canvas></div>
-        </div>
-      </div>
     <div class="row mt-5">
-        <div class="col">
-            <div class="container">
+        <div class="container">
+            <div class="col" style="width: 200px">
                 <form role="form">
                     <div class="form-group" [formGroup]="this.myForm">
                         <label>Category</label>
@@ -38,35 +33,45 @@
                 </form>
             </div>
    
-            <accordion [closeOthers]="true" [isAnimated]="true">
-                <accordion-group [heading]="item.label" *ngFor="let item of this.accordionElements; let i = index">
-                    <ngx-datatable
-                    id="custom-ngx-datatable"
-                    [rows]="item.transactions"
-                    columnMode="force"
-                    [headerHeight]="40"
-                    [footerHeight]="40"
-                    rowHeight="auto"
-                  >
-                    <ngx-datatable-column name="Product Name" prop="name">
-                      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
-                        {{value}}
-                      </ng-template>
-                    </ngx-datatable-column>
-                    <ngx-datatable-column name="Date" prop="date">
-                      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
-                        {{formatDate(value)}}
-                      </ng-template>
-                    </ngx-datatable-column>
-                    <ngx-datatable-column name="Price" prop="value">
-                      <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
-                        {{value}}
-                      </ng-template>
-                    </ngx-datatable-column>
-                
-                  </ngx-datatable>
-                </accordion-group>
-            </accordion>
+            <div style="display: flex; width: 100%">
+                <div style="width: 50%; margin-top: 20px">
+                    <accordion [closeOthers]="true" [isAnimated]="true">
+                        <accordion-group [heading]="item.label" *ngFor="let item of this.accordionElements; let i = index">
+                            <ngx-datatable
+                            id="custom-ngx-datatable"
+                            [rows]="item.transactions"
+                            columnMode="force"
+                            [headerHeight]="40"
+                            [footerHeight]="40"
+                            rowHeight="auto"
+                        >
+                            <ngx-datatable-column name="Product Name" prop="name">
+                            <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+                                {{value}}
+                            </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Date" prop="date">
+                            <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+                                {{formatDate(value)}}
+                            </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Price" prop="value">
+                            <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+                                {{value}}
+                            </ng-template>
+                            </ngx-datatable-column>
+                        
+                        </ngx-datatable>
+                        </accordion-group>
+                    </accordion>
+                </div>  
+            <div style="margin-top: 25px; width: 50%; min-height: 509px">
+                <div class="col" style="height: 100%">
+                    <div class="chart-area" style="height: 100%" ><canvas id="lineChart"> </canvas></div>
+                </div>
+              </div>
+            </div>
         </div>
     </div>
+    
 </div>

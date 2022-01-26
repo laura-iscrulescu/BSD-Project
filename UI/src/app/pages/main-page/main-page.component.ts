@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Chart, ChartItem } from 'chart.js';
 import axios, { AxiosRequestConfig } from 'axios';
 import { UserIDStorageService } from 'src/app/_services/storage/userId-storage.service';
-import { environment } from '../../../environments/environment'
+import { environment } from '../../../environments/environment';
 import { TokenStorageService } from 'src/app/_services/storage/token-storage.service';
 import _ from 'lodash';
 import * as moment from 'moment-timezone';
@@ -159,12 +159,12 @@ export class MainPageComponent implements OnInit {
             Authorization: `Bearer ${this.tokenStorageService.getToken()}`
           }
         };
-        let res = await axios(options);
+        const res = await axios(options);
         if (res && res.status === 200) {
           if (res.data) {
-            this.transactions.push(res.data) 
+            this.transactions.push(res.data);
             console.log(res.data);
-  
+
             this.updateDoughtnutChart();
             this.updateLineChart();
           }
@@ -196,7 +196,7 @@ export class MainPageComponent implements OnInit {
             Authorization: `Bearer ${this.tokenStorageService.getToken()}`
           }
         };
-        let res = await axios(options);
+        const res = await axios(options);
         if (res && res.status === 200) {
           if (res.data) {
             this.categories.push(res.data);
@@ -232,7 +232,7 @@ export class MainPageComponent implements OnInit {
   public async getAllTransactions (): Promise<void> {
     const reqBody = {
       user_id: this.userIDStorageService.getUserId()
-    }
+    };
     try {
       const options: AxiosRequestConfig = {
         method: 'POST',
@@ -242,9 +242,9 @@ export class MainPageComponent implements OnInit {
           Authorization: `Bearer ${this.tokenStorageService.getToken()}`
         }
       };
-      let res = await axios(options);
+      const res = await axios(options);
       if (res && res.status === 200) {
-        this.transactions = res.data
+        this.transactions = res.data;
       }
     } catch (e) {
       console.error(e);
@@ -254,7 +254,7 @@ export class MainPageComponent implements OnInit {
   public async getAllCategories (): Promise<void> {
     const reqBody = {
       user_id: this.userIDStorageService.getUserId()
-    }
+    };
     try {
       const options: AxiosRequestConfig = {
         method: 'POST',
@@ -264,71 +264,72 @@ export class MainPageComponent implements OnInit {
           Authorization: `Bearer ${this.tokenStorageService.getToken()}`
         }
       };
-      let res = await axios(options);
+      const res = await axios(options);
       if (res && res.status === 200) {
-        this.categories = res.data
+        this.categories = res.data;
       }
     } catch (e) {
       console.error(e);
     }
   }
 
-  public updateDoughtnutChart(): void {
-    this.dataDoughtnut = []
-    this.doughtnutBackgroundColor = []
-    this.doughtnutBorderColor = []
+  public updateDoughtnutChart (): void {
+    this.dataDoughtnut = [];
+    this.doughtnutBackgroundColor = [];
+    this.doughtnutBorderColor = [];
 
-    const groupedTransactions = _.groupBy(this.transactions, "category");
-    const groupedCategories = _.groupBy(this.categories, "name");
+    const groupedTransactions = _.groupBy(this.transactions, 'category');
+    const groupedCategories = _.groupBy(this.categories, 'name');
     this.labelsDoughnut = Object.keys(groupedTransactions);
-    
-    for(const key in groupedTransactions) {
-      this.dataDoughtnut.push(_.sumBy(groupedTransactions[key], "value"));
+
+    for (const key in groupedTransactions) {
+      this.dataDoughtnut.push(_.sumBy(groupedTransactions[key], 'value'));
     }
 
-    for(const key in groupedTransactions) {
-      const category = groupedCategories[key][0]
-      this.doughtnutBackgroundColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 0.2)`)
-      this.doughtnutBorderColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 1)`)
+    for (const key in groupedTransactions) {
+      const category = groupedCategories[key][0];
+      this.doughtnutBackgroundColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 0.2)`);
+      this.doughtnutBorderColor.push(`rgba(${category.color.r}, ${category.color.g}, ${category.color.b}, 1)`);
     }
 
-    this.currentSpendings = _.sumBy(this.transactions, "value");
+    this.currentSpendings = _.sumBy(this.transactions, 'value');
 
     if (!this.currentSpendings) {
       this.currentSpendings = 0;
     }
-    
+
     if (this.doguhnutChart) {
       this.doguhnutChart.data.labels = this.labelsDoughnut;
       this.doguhnutChart.data.datasets = [{
-          data: this.dataDoughtnut,
-          backgroundColor: this.doughtnutBackgroundColor,
-          borderColor: this.doughtnutBorderColor,
-          borderWidth: 1
-        }]
+        data: this.dataDoughtnut,
+        backgroundColor: this.doughtnutBackgroundColor,
+        borderColor: this.doughtnutBorderColor,
+        borderWidth: 1
+      }];
       this.doguhnutChart.update();
     }
   }
 
-  public hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : null;
+  public hexToRgb (hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+      ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      }
+      : null;
   }
 
-  public updateLineChart(): void {
+  public updateLineChart (): void {
     this.labelsLine = [];
     this.dataLine = [];
 
     for (let day = moment().subtract(30, 'days'); day.isSameOrBefore(moment()); day.add(1, 'days')) {
       this.labelsLine.push(day.format('DD/MM'));
-      
     }
 
-    const groupedTransactions = _.groupBy(this.transactions, transaction => moment(transaction.date).format("DD/MM"));
+    const groupedTransactions = _.groupBy(this.transactions, transaction => moment(transaction.date).format('DD/MM'));
 
     for (const key of this.labelsLine) {
       const dailyTransactions = groupedTransactions[key];

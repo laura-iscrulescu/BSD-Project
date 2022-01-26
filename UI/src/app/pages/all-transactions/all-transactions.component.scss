@@ -2,6 +2,20 @@
     margin-top: 50px;
 }
 
+.custom-align-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+input, select, textarea{
+  color: #6c757d;
+}
+
+textarea:focus, input:focus {
+  color: #6c757d;
+}
+
 #delete-transaction-icon {
   cursor: pointer;
 }
@@ -62,3 +76,9 @@
       }
     }
   }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
