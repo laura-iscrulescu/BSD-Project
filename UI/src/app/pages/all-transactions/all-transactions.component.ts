@@ -75,6 +75,17 @@ export class AllTransactionsComponent implements OnInit {
     }
   }
 
+  public checkDates(): void {
+    const lowerDate = this.valueForm.value.lowerDate
+    const upperDate = this.valueForm.value.upperDate
+    if (lowerDate && upperDate) {
+      if (lowerDate > upperDate) {
+        this.valueForm.controls['lowerDate'].setValue(upperDate) 
+        this.valueForm.controls['upperDate'].setValue(lowerDate)
+      }
+    }
+  }
+
   public filterElems(): void {
       const lowerDate = this.valueForm.value.lowerDate
       const upperDate = this.valueForm.value.upperDate
