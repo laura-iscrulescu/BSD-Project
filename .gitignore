@@ -125,3 +125,6 @@ node_modules
 
 # Ignore files related to API keys
 *.env
+
+# Ignode package-lock.json
+package-lock.json

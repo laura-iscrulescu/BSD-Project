@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/add", async (req, res) => {
 	const transaction = req.body;
 
-	if (transaction.user_id && transaction.value && transaction.currency && transaction.category && transaction.date) {
+	if (transaction.user_id && transaction.name && transaction.value && transaction.category && transaction.date) {
         try {
             const newTransaction = await db.transaction.addTransaction(transaction);
             res.status(200).send(newTransaction);
@@ -39,7 +39,7 @@ router.post("/delete", async (req, res) => {
 	}
 });
 
-router.get("/", async (req, res) => {
+router.post("/", async (req, res) => {
     const { user_id } = req.body;
     if (user_id) {
         try {

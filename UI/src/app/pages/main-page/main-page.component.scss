@@ -1,0 +1,12 @@
+.home-page-header {
+    margin-top: 20px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+bs-datepicker-container, bs-daterangepicker-container { z-index: 2000; }
+

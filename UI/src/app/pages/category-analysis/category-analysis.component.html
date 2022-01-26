@@ -1,0 +1,77 @@
+<!-- <div class="container">
+  <div class="row">
+      <mat-form-field appearance="fill">
+        <mat-label>Category</mat-label>
+        <mat-select (selectionChange)="selectCategory($event)" [(value)]="activeCategory">
+          <mat-option [value]="category"
+            *ngFor="let category of categories">
+              {{ category.categoryName }}
+            </mat-option>
+        </mat-select>
+      </mat-form-field>
+  </div>
+  <div class="row">
+    <div id="accordion">
+        <app-expansion-panel [monthlyTransactions]="monthlyTransactions"></app-expansion-panel>
+        <div class="chart-area" style="width: 50%; padding: 15px"><canvas id="lineChart"> </canvas></div>
+  </div>
+</div> -->
+<div class="container mt-5">
+    <div class="row mt-5">
+        <div class="container">
+            <div class="col" style="width: 200px">
+                <form role="form">
+                    <div class="form-group" [formGroup]="this.myForm">
+                        <label>Category</label>
+                        <div class="input-group input-group-alternative">
+                          <select class="form-control"  placeholder="Category" formControlName="category" (change)="selectChange()">
+                            <option value="" selected disabled>Choose a category</option>
+                            <option *ngFor="let category of this.categories" [ngValue]="category.name">{{category.name}}</option>
+                          </select>
+                        </div>
+                    </div> 
+                </form>
+            </div>
+   
+            <div style="display: flex; width: 100%">
+                <div style="width: 50%; margin-top: 20px">
+                    <accordion [closeOthers]="true" [isAnimated]="true">
+                        <accordion-group [heading]="item.label" *ngFor="let item of this.accordionElements; let i = index">
+                            <ngx-datatable
+                            id="custom-ngx-datatable"
+                            [rows]="item.transactions"
+                            columnMode="force"
+                            [headerHeight]="40"
+                            [footerHeight]="40"
+                            rowHeight="auto"
+                        >
+                            <ngx-datatable-column name="Product Name" prop="name">
+                            <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+                                {{value}}
+                            </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Date" prop="date">
+                            <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+                                {{formatDate(value)}}
+                            </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Price" prop="value">
+                            <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
+                                {{value}}
+                            </ng-template>
+                            </ngx-datatable-column>
+                        
+                        </ngx-datatable>
+                        </accordion-group>
+                    </accordion>
+                </div>  
+            <div style="margin-top: 25px; width: 50%; min-height: 509px">
+                <div class="col" style="height: 100%">
+                    <div class="chart-area" style="height: 100%" ><canvas id="lineChart"> </canvas></div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    
+</div>

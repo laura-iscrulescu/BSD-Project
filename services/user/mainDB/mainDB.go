@@ -15,10 +15,8 @@ import (
 
 type MainDB interface {
 	Add(email, password, name string) error
-	Get(email string) (*UserWithoutPasswordModel, error)
-	GetWithPassword(email string) (*UserModel, error)
-	Update(user *UserWithoutPasswordModel) error
-	UpdateWithPassword(user *UserModel) error
+	Get(email string) (*UserModel, error)
+	Update(user *UserModel) error
 	Remove(username string) error
 }
 
@@ -108,17 +106,7 @@ func (m *mainDBStruct) Add(email, password, name string) error {
 	return nil
 }
 
-func (m *mainDBStruct) Get(email string) (*UserWithoutPasswordModel, error) {
-	resp := &UserWithoutPasswordModel{}
-	err := m.client.FindOne(m.ctx, bson.D{{"email", email}}, options.FindOne().SetProjection(bson.M{"password": 0})).Decode(resp)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (m *mainDBStruct) GetWithPassword(email string) (*UserModel, error) {
+func (m *mainDBStruct) Get(email string) (*UserModel, error) {
 	resp := &UserModel{}
 	err := m.client.FindOne(m.ctx, bson.D{{"email", email}}).Decode(resp)
 	if err != nil {
@@ -128,21 +116,7 @@ func (m *mainDBStruct) GetWithPassword(email string) (*UserModel, error) {
 	return resp, nil
 }
 
-func (m *mainDBStruct) Update(user *UserWithoutPasswordModel) error {
-	_, err := m.client.DeleteOne(m.ctx, bson.D{{"email", user.Email}})
-	if err != nil {
-		return err
-	}
-
-	_, err = m.client.InsertOne(m.ctx, *user)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *mainDBStruct) UpdateWithPassword(user *UserModel) error {
+func (m *mainDBStruct) Update(user *UserModel) error {
 	_, err := m.client.DeleteOne(m.ctx, bson.D{{"email", user.Email}})
 	if err != nil {
 		return err

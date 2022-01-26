@@ -1,0 +1,96 @@
+<nav
+  class="navbar navbar-expand-lg fixed-top"
+  color-on-scroll="100"
+  id="navbar-top"
+>
+  <div class="container">
+    <div class="navbar-translate">
+      <a
+        class="navbar-brand"
+        [routerLink]="['/transactions/home']"
+        placement="bottom"
+        tooltip="Navigate home"
+      >
+        <span> MoneyManager </span>
+      </a>
+      <button
+        aria-controls="navigation-index"
+        aria-label="Toggle navigation"
+        class="navbar-toggler navbar-toggler"
+        [attr.aria-expanded]="!isCollapsed"
+        (click)="isCollapsed = !isCollapsed"
+        id="navigation"
+        type="button"
+      >
+        <span class="navbar-toggler-bar bar1"> </span>
+        <span class="navbar-toggler-bar bar2"> </span>
+        <span class="navbar-toggler-bar bar3"> </span>
+      </button>
+    </div>
+    <div class="navbar-collapse justify-content-center">
+      <a
+        class="navbar-brand"
+        [routerLink]="['/transactions/all-transactions']"
+        placement="bottom"
+        tooltip="All transactions"
+      >
+        <span class="navbar-item-style"> All transactions </span>
+      </a>
+      <a
+        class="navbar-brand"
+        [routerLink]="['/transactions/predictions']"
+        placement="bottom"
+        tooltip="Predictions"
+      >
+        <span class="navbar-item-style"> Predictions </span>
+      </a>
+      <a
+        class="navbar-brand"
+        [routerLink]="['/transactions/category-analysis']"
+        placement="bottom"
+        tooltip="Category Analysis"
+      >
+        <span> Category Analysis </span>
+      </a>
+    </div>
+    <div
+      class="justify-content-end"
+      id="navigation"
+    >
+      <div class="navbar-collapse-header">
+        <div class="row">
+          <div class="col-6 collapse-brand"><a> BLK• </a></div>
+          <div class="col-6 collapse-close text-right">
+            <button
+              aria-controls="navigation-index"
+              aria-label="Toggle navigation"
+              class="navbar-toggler"
+              [attr.aria-expanded]="!isCollapsed"
+              (click)="isCollapsed = !isCollapsed"
+              id="navigation"
+              type="button"
+            >
+              <i class="tim-icons icon-simple-remove"> </i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <ul class="navbar-nav">
+        <li class="nav-item p-0">
+          <a
+            class="nav-link"
+            [routerLink]="['/account/settings']"
+            placement="bottom"
+            tooltip="Settings"
+          >
+            <i class="fas fa-cog"></i>
+            <p class="d-lg-none d-xl-none">Settings</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="handleLogout()" style="cursor:pointer"> Logout </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

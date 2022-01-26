@@ -1,0 +1,29 @@
+<mat-accordion>
+    <mat-expansion-panel hideToggle class="card" *ngFor="let month of monthlyTransactions | keyvalue">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          This is the {{ month.key }} month
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="card-body">
+        <table class="table custom-table-style">
+            <thead>
+              <tr>
+                <th class="text-center">#</th>
+                <th>Product Name</th>
+                <th>Date</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let transaction of month.value; let i = index">
+                <td class="text-center">{{ i + 1}}</td>
+                <td>{{ transaction.productName }}</td>
+                <td>{{ transaction.date }}</td>
+                <td class="text-right">{{ transaction.price }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+    </mat-expansion-panel>
+  </mat-accordion>

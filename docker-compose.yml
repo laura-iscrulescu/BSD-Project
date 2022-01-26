@@ -1,0 +1,131 @@
+version: "3.9"
+services:
+  nginx-frontend:
+    container_name: nginx-frontend
+    build:
+      dockerfile: ./Docker/Dockerfile
+      context: ./UI
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
+    ports:
+      - "8090:80"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.7
+  nginx-backend:
+    image: nginx
+    container_name: nginx-backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
+    volumes:
+      - ./services/nginx-templates:/etc/nginx/templates
+    ports:
+      - "8080:80"
+    depends_on:
+      - authenticator
+      - user
+      - transactions
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.4
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
+    ports:
+      - "6379:6379"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.10
+  authenticator:
+    container_name: authenticator
+    build:
+      dockerfile: Dockerfile
+      context: ./services/authenticator
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
+    depends_on:
+      - redis
+    environment:
+      SERVER_ADDR: "10.10.0.2"
+      SERVER_PORT: "8001"
+      REDIS_ADDR: "10.10.0.10"
+      REDIS_PORT: "6379"
+      REDIS_ENTRY_EXPIRATION: "12" # in hours
+      MONGO_DATABASE: "bsdDB"
+      MONGO_COLLECTION: "users"
+    env_file:
+      - ./services/config.env
+    ports:
+      - "8001:8001"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.2
+  user:
+    container_name: user
+    build:
+      dockerfile: Dockerfile
+      context: ./services/user
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
+    environment:
+      SERVER_ADDR: "10.10.0.3"
+      SERVER_PORT: "8002"
+      REDIS_ADDR: "10.10.0.10"
+      REDIS_PORT: "6379"
+      MONGO_DATABASE: "bsdDB"
+      MONGO_COLLECTION: "users"
+    env_file:
+      - ./services/config.env
+    depends_on:
+      - redis
+    ports:
+      - "8002:8002"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.3
+  transactions:
+    container_name: transactions
+    build:
+      dockerfile: Dockerfile
+      context: ./services/transactions
+    deploy:
+      resources:
+        limits:
+          cpus: '0.02'
+          memory: 1000M
+    environment:
+      MONGO_URI: mongodb+srv://cluster0.dd7vb.mongodb.net
+    env_file:
+      - ./services/config.env
+    depends_on:
+      - redis
+    ports:
+      - "3000:3000"
+    networks:
+      vpcbr:
+        ipv4_address: 10.10.0.5
+
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.10.0.0/16
+         gateway: 10.10.0.1

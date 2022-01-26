@@ -1,0 +1,84 @@
+.custom-table-style {
+    margin-top: 50px;
+}
+
+.custom-align-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+input, select, textarea{
+  color: #6c757d;
+}
+
+textarea:focus, input:focus {
+  color: #6c757d;
+}
+
+#delete-transaction-icon {
+  cursor: pointer;
+}
+
+#custom-ngx-datatable {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+::ng-deep #custom-ngx-datatable datatable-body-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+::ng-deep #custom-ngx-datatable datatable-body-cell {
+    padding: 12px 7px 12px 7px;
+}
+
+::ng-deep #custom-ngx-datatable .datatable-footer {
+    .datatable-pager {
+        margin: 0 10px;
+
+      li {
+        vertical-align: middle;
+
+        &.disabled a {
+            color: #6c757d !important;
+            background-color: transparent !important;
+            cursor: default;
+          }
+
+        &.active a {
+          font-weight: bold;
+          background-image: linear-gradient(to bottom left, #e14eca, #ba54f5, #e14eca);
+        }
+      }
+
+      a {
+        color: white;
+        height: 22px;
+        min-width: 24px;
+        line-height: 22px;
+        padding: 0 6px;
+        border-radius: 3px;
+        margin: 6px 3px;
+        text-align: center;
+        vertical-align: top;
+        text-decoration: none;
+        vertical-align: bottom;
+      }
+
+      .datatable-icon-left,
+      .datatable-icon-skip,
+      .datatable-icon-right,
+      .datatable-icon-prev {
+        font-size: 20px;
+        line-height: 20px;
+        padding: 0 3px;
+      }
+    }
+  }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

@@ -1,0 +1,10 @@
+::ng-deep .form-control {
+    color: black !important; 
+}
+
+.custom-align {
+    min-height: 700px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
