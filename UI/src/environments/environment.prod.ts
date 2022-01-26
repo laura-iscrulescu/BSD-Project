@@ -8,5 +8,6 @@ export const environment = {
   addTransaction: "http://localhost:8080/api/v1/transactions/add",
   addCategory: "http://localhost:8080/api/v1/categories/add",
   deleteTransaction: "http://localhost:8080/api/v1/transactions/delete",
-  changePasswd: "http://localhost:8080/user/change/password"
+  changePasswd: "http://localhost:8080/user/change/password",
+  changeUser: "http://localhost:8080/user/change/name"
 };
