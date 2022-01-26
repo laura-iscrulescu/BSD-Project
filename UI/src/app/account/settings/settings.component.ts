@@ -92,7 +92,8 @@ export class SettingsComponent implements OnInit {
         };
         let res = await axios(options);
         if (res && res.status === 200) {
-          // TODO do something with response if needed
+          this.changeUserNameForm.reset();
+          this.modals.usernameRef?.hide();
         }
       } catch (e) {
         console.error(e);

@@ -72,7 +72,6 @@ export class AllTransactionsComponent implements OnInit {
           ));
         }
         this.copyTransactions = JSON.parse(JSON.stringify(this.transactions));
-        console.log(res.data);
       }
     } catch (e) {
       console.error(e);

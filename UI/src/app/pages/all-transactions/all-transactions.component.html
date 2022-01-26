@@ -56,19 +56,19 @@
         {{formatDate(value)}}
       </ng-template>
     </ngx-datatable-column>
-    <ngx-datatable-column name="Price" prop="price" [width]="200">
+    <ngx-datatable-column name="Price" prop="price" [width]="100">
       <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
         {{value}}
       </ng-template>
     </ngx-datatable-column>
     <ngx-datatable-column name="Category" prop="category" [width]="100">
       <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
-        <span class=" badge badge-primary">
+        <span class=" badge badge-primary w-100">
           {{value}}
         </span>
       </ng-template>
     </ngx-datatable-column>
-    <ngx-datatable-column name="Actions" prop="_id" [width]="100">
+    <ngx-datatable-column name="Actions" prop="_id" [width]="10" [sortable]="false">
       <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
         <i class="fas fa-trash text-danger" (click)="deleteTransaction(value)" id="delete-transaction-icon"></i>
       </ng-template>
