@@ -7,6 +7,7 @@ import { UserIDStorageService } from 'src/app/_services/storage/userId-storage.s
 import { environment } from '../../../environments/environment'
 import { TokenStorageService } from 'src/app/_services/storage/token-storage.service';
 import _ from 'lodash';
+import * as moment from 'moment-timezone';
 // import Chart from 'chart.js';
 
 @Component({
@@ -20,27 +21,14 @@ export class MainPageComponent implements OnInit {
   private addTransactionURL = environment.addTransaction;
   private addCategoryURL = environment.addCategory;
 
-  private doguhnutChart = null;
+  private doguhnutChart: Chart | null = null;
+  private lineChart: Chart | null = null;
 
   public currentSpendings = 0;
   public budget = 30;
 
-  public labelsLine = [
-    'JAN',
-    'FEB',
-    'MAR',
-    'APR',
-    'MAY',
-    'JUN',
-    'JUL',
-    'AUG',
-    'SEP',
-    'OCT',
-    'NOV',
-    'DEC'
-  ];
-
-  public dataLine = [80, 160, 200, 160, 250, 280, 220, 190, 200, 250, 290, 320];
+  public labelsLine = [];
+  public dataLine = [];
 
   public labelsDoughnut = [];
   public dataDoughtnut = [];
@@ -77,21 +65,17 @@ export class MainPageComponent implements OnInit {
     // get data
     await this.getAllCategories();
     await this.getAllTransactions();
-    this.updateChart();
 
-    // charts
+    // initialize charts data & labels
+    this.updateDoughtnutChart();
+    this.updateLineChart();
 
-    // const ctx = document.getElementById('lineChart') as ChartItem;
-    // const ctx = canvas.getContext('2d') as ChartItem;
-    // const gradientFill = ctx.createLinearGradient(0, 350, 0, 50);
-    // gradientFill.addColorStop(0, 'rgba(228, 76, 196, 0.0)');
-    // gradientFill.addColorStop(1, 'rgba(228, 76, 196, 0.14)');
     const canvas: any = document.getElementById('lineChart');
     const ctx = canvas.getContext('2d');
     const gradientFill = ctx.createLinearGradient(0, 350, 0, 50);
     gradientFill.addColorStop(0, 'rgba(228, 76, 196, 0.0)');
     gradientFill.addColorStop(1, 'rgba(228, 76, 196, 0.14)');
-    const lineChart = new Chart(canvas, {
+    this.lineChart = new Chart(canvas, {
       type: 'line',
       data: {
         labels: this.labelsLine,
@@ -180,8 +164,10 @@ export class MainPageComponent implements OnInit {
         if (res && res.status === 200) {
           if (res.data) {
             this.transactions.push(res.data) 
-            // this.updateTransactions(res.data);
-            this.updateChart();
+            console.log(res.data);
+  
+            this.updateDoughtnutChart();
+            this.updateLineChart();
           }
         }
       } catch (e) {
@@ -215,7 +201,7 @@ export class MainPageComponent implements OnInit {
         if (res && res.status === 200) {
           if (res.data) {
             this.categories.push(res.data);
-            this.updateChart();
+            this.updateDoughtnutChart();
           }
         }
       } catch (e) {
@@ -288,7 +274,7 @@ export class MainPageComponent implements OnInit {
     }
   }
 
-  public updateChart(): void {
+  public updateDoughtnutChart(): void {
     this.dataDoughtnut = []
     this.doughtnutBackgroundColor = []
     this.doughtnutBorderColor = []
@@ -332,5 +318,34 @@ export class MainPageComponent implements OnInit {
       g: parseInt(result[2], 16),
       b: parseInt(result[3], 16)
     } : null;
+  }
+
+  public updateLineChart(): void {
+    this.labelsLine = [];
+    this.dataLine = [];
+
+    for (let day = moment().subtract(30, 'days'); day.isSameOrBefore(moment()); day.add(1, 'days')) {
+      this.labelsLine.push(day.format('DD/MM'));
+      
+    }
+
+    const groupedTransactions = _.groupBy(this.transactions, transaction => moment(transaction.date).format("DD/MM"));
+
+    for (const key of this.labelsLine) {
+      const dailyTransactions = groupedTransactions[key];
+      if (dailyTransactions) {
+        this.dataLine.push(_.sumBy(dailyTransactions, 'value'));
+      } else {
+        this.dataLine.push(0);
+      }
+    }
+
+    if (this.lineChart) {
+      this.lineChart.data.labels = this.labelsLine;
+      if (this.lineChart.data.datasets.length) {
+        this.lineChart.data.datasets[0].data = this.dataLine;
+      }
+      this.lineChart.update();
+    }
   }
 }
