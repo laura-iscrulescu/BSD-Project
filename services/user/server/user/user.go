@@ -246,7 +246,7 @@ func (u *userStruct) Delete(req DeleteReq) ([]byte, error, int) {
 	}
 
 	// Check to see if the user exists
-	user, err := u.mainDB.GetWithPassword(email)
+	user, err := u.mainDB.Get(email)
 	if err != nil {
 		return nil, err, http.StatusBadRequest
 	}
