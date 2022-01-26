@@ -1,1 +1,19 @@
-<p>category-analysis works!</p>
+<div class="container">
+  <div class="row">
+      <mat-form-field appearance="fill">
+        <mat-label>Category</mat-label>
+        <mat-select (selectionChange)="selectCategory($event)" [(value)]="activeCategory">
+          <mat-option [value]="category"
+            *ngFor="let category of categories">
+              {{ category.categoryName }}
+            </mat-option>
+        </mat-select>
+      </mat-form-field>
+  </div>
+  <div class="row">
+    <div id="accordion">
+        <app-expansion-panel [monthlyTransactions]="monthlyTransactions"></app-expansion-panel>
+        <!-- <app-charts [spendingByCategory]="spendingByCategory"></app-charts> -->
+        <div class="chart-area" style="width: 50%; padding: 15px"><canvas id="lineChart"> </canvas></div>
+  </div>
+</div>

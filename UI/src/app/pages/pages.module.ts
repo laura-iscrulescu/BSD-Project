@@ -12,13 +12,20 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { MatSelectModule } from '@angular/material/select';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { ExpansionPanelComponent } from './category-analysis/expansion-panel/expansion-panel.component';
 
 @NgModule({
   declarations: [
     MainPageComponent,
     AllTransactionsComponent,
     PredictionsComponent,
-    CategoryAnalysisComponent
+    CategoryAnalysisComponent,
+    ExpansionPanelComponent
   ],
   imports: [
     CommonModule,
@@ -29,7 +36,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ModalModule.forRoot(),
     BsDatepickerModule.forRoot(),
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    BsDropdownModule.forRoot(),
+    MatSelectModule,
+    CollapseModule,
+    AccordionModule,
+    MatExpansionModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

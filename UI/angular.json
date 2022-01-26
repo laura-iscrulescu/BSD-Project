@@ -35,7 +35,7 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.scss",
               "src/assets/css/nucleo-icons.css",
               "src/assets/scss/blk-design-system.scss",
@@ -107,7 +107,7 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.scss",
               "src/assets/css/nucleo-icons.css",
               "src/assets/scss/blk-design-system.scss",
