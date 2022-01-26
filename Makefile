@@ -26,7 +26,7 @@ run:
 	$(MAKE) user
 	$(MAKE) transactions
 	$(MAKE) nginx-backend
-	$(MAKE) nginx-frontend
+	# $(MAKE) nginx-frontend
 
 stop:
 	docker-compose down
