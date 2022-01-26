@@ -1,15 +1,46 @@
 <div class="container mt-5">
-  <ngx-datatable
-    id="custom-ngx-datatable"
-    [rows]="transactions"
-    [loadingIndicator]="loadingIndicator"
-    [columnMode]="ColumnMode.force"
-    [headerHeight]="40"
-    [footerHeight]="40"
-    [limit]="10"
-    rowHeight="auto"
-    [reorderable]="reorderable"
-  >
+  <form role="form" [formGroup]="valueForm">
+    <div class="form-group">
+      <label>Date</label>
+      <div class="row">
+        <div class="col-4">
+          <div class="input-group input-daterange">
+            <input type="date" placeholder="Date" class="form-control" formControlName="lowerDate">
+          </div>
+        </div>
+        <div class="col-1">
+          TO
+        </div>
+        <div class="col-4">
+          <div class="input-group input-daterange">
+            <input type="date" placeholder="Date" class="form-control" formControlName="upperDate">
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="text-center">
+            <button class="btn btn-primary" type="button" type="submit" (click)="filterElems();">
+              Filter
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="input-group input-daterange">
+            <input type="text" placeholder="Lower Value" class="form-control" formControlName="lowerValue">
+          </div>
+        </div>
+        <div class="col">
+          <div class="input-group input-daterange">
+            <input type="text" placeholder="Upper Value" class="form-control" formControlName="upperValue">
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <ngx-datatable id="custom-ngx-datatable" [rows]="transactions" [loadingIndicator]="loadingIndicator"
+    [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="40" [limit]="10" rowHeight="auto"
+    [reorderable]="reorderable">
     <!-- <ngx-datatable-column name="#" [width]="10">
       <ng-template let-row="row" ngx-datatable-cell-template>
         {{this.transactions.indexOf(row)}}
