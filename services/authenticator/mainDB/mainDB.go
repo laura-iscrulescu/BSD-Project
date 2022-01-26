@@ -30,6 +30,7 @@ type UserModel struct {
 	Email      string             `json:"email"`
 	Password   string             `json:"password"`
 	Categories []string           `json:"categories"`
+	Goal       int                `json:"goal"`
 }
 
 func Initialize(ctx context.Context, log log.Log) (MainDB, error) {
