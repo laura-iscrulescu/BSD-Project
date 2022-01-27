@@ -297,7 +297,7 @@ export class MainPageComponent implements OnInit {
     this.doughtnutBackgroundColor = [];
     this.doughtnutBorderColor = [];
 
-    const groupedTransactions = _.groupBy(this.transactions, 'category');
+    const groupedTransactions = _.groupBy(this.transactions.filter((transaction) => moment(transaction).isSameOrBefore(moment()) && moment(transaction).isSameOrAfter(moment().subtract(30, 'days'))), 'category');
     const groupedCategories = _.groupBy(this.categories, 'name');
     this.labelsDoughnut = Object.keys(groupedTransactions);
 
