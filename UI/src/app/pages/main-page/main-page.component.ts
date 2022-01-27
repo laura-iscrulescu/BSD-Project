@@ -164,7 +164,6 @@ export class MainPageComponent implements OnInit {
         if (res && res.status === 200) {
           if (res.data) {
             this.transactions.push(res.data);
-            console.log(res.data);
 
             this.updateDoughtnutChart();
             this.updateLineChart();
