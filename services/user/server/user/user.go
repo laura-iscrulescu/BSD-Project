@@ -8,7 +8,6 @@ import (
 	"services/user/identityDB"
 	"services/user/log"
 	"services/user/mainDB"
-	"services/user/utils"
 )
 
 type User interface {
@@ -19,8 +18,6 @@ type User interface {
 	ChangeName(req ChangeNameReq) ([]byte, error, int)
 	ChangeMonthlyGoal(req ChangeMonthlyGoalReq) ([]byte, error, int)
 	Delete(req DeleteReq) ([]byte, error, int)
-	AddCategory(req AddCategoryReq) ([]byte, error, int)
-	RemoveCategory(req RemoveCategoryReq) ([]byte, error, int)
 }
 
 type userStruct struct {
@@ -145,7 +142,7 @@ func (u *userStruct) ChangePassword(req ChangePasswordReq) ([]byte, error, int) 
 
 	// Update user Password
 	user.Password = req.NewPassword
-	err = u.mainDB.Update(user)
+	err = u.mainDB.UpdatePassword(user)
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
 	}
@@ -181,7 +178,7 @@ func (u *userStruct) ChangeName(req ChangeNameReq) ([]byte, error, int) {
 
 	// Update user Name
 	user.Name = req.Name
-	err = u.mainDB.Update(user)
+	err = u.mainDB.UpdateName(user)
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
 	}
@@ -217,7 +214,7 @@ func (u *userStruct) ChangeMonthlyGoal(req ChangeMonthlyGoalReq) ([]byte, error,
 
 	// Update user Name
 	user.Goal = req.Goal
-	err = u.mainDB.Update(user)
+	err = u.mainDB.UpdateGoal(user)
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
 	}
@@ -258,78 +255,6 @@ func (u *userStruct) Delete(req DeleteReq) ([]byte, error, int) {
 
 	// Remove the user from the database
 	err = u.mainDB.Remove(email)
-	if err != nil {
-		return nil, err, http.StatusInternalServerError
-	}
-
-	return nil, nil, http.StatusOK
-}
-
-func (u *userStruct) AddCategory(req AddCategoryReq) ([]byte, error, int) {
-	u.log.Info("ADD CATEGORY FUNCTION")
-
-	// Validate Token and Category
-	err := CheckToken(req.Token)
-	if err != nil {
-		return nil, err, http.StatusBadRequest
-	}
-
-	err = CheckCategory(req.Category)
-	if err != nil {
-		return nil, err, http.StatusBadRequest
-	}
-
-	// Get the email for the coresponding token
-	email, err := u.identityDB.GetKey(req.Token)
-	if err != nil {
-		return nil, err, http.StatusUnauthorized
-	}
-
-	// Get the user from the database
-	user, err := u.mainDB.Get(email)
-	if err != nil {
-		return nil, err, http.StatusBadRequest
-	}
-
-	// Add Category to user Categories
-	user.Categories = append(user.Categories, req.Category)
-	err = u.mainDB.Update(user)
-	if err != nil {
-		return nil, err, http.StatusInternalServerError
-	}
-
-	return nil, nil, http.StatusOK
-}
-
-func (u *userStruct) RemoveCategory(req RemoveCategoryReq) ([]byte, error, int) {
-	u.log.Info("REMOVE CATEGORY FUNCTION")
-
-	// Validate Token and Category
-	err := CheckToken(req.Token)
-	if err != nil {
-		return nil, err, http.StatusBadRequest
-	}
-
-	err = CheckCategory(req.Category)
-	if err != nil {
-		return nil, err, http.StatusBadRequest
-	}
-
-	// Get the email for the coresponding token
-	email, err := u.identityDB.GetKey(req.Token)
-	if err != nil {
-		return nil, err, http.StatusUnauthorized
-	}
-
-	// Get the user from the database
-	user, err := u.mainDB.Get(email)
-	if err != nil {
-		return nil, err, http.StatusBadRequest
-	}
-
-	// Remove Category from user Categories
-	user.Categories = utils.Remove(user.Categories, req.Category)
-	err = u.mainDB.Update(user)
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
 	}

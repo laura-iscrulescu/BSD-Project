@@ -118,6 +118,7 @@ export class SettingsComponent implements OnInit {
         };
         const res = await axios(options);
         if (res && res.status === 200) {
+          console.log(res);
           this.changeGoalForm.reset();
           this.modals.goalRef?.hide();
         }
