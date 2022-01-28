@@ -15,6 +15,7 @@ import * as moment from 'moment-timezone';
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
+  private getUserURL = environment.getGoal;
   private allTransactionsURL = environment.allTransactions;
   private allCategoriesURL = environment.allCategories;
   private addTransactionURL = environment.addTransaction;
@@ -24,7 +25,7 @@ export class MainPageComponent implements OnInit {
   private lineChart: Chart | null = null;
 
   public currentSpendings = 0;
-  public budget = 30;
+  public budget = 0;
 
   public labelsLine = [];
   public dataLine = [];
@@ -61,7 +62,7 @@ export class MainPageComponent implements OnInit {
   constructor (private formBuilder: FormBuilder, public tokenStorageService: TokenStorageService, public userIDStorageService: UserIDStorageService) { }
 
   async ngOnInit (): Promise<void> {
-    // get data
+    await this.getGoal();
     await this.getAllCategories();
     await this.getAllTransactions();
 
@@ -163,7 +164,6 @@ export class MainPageComponent implements OnInit {
         if (res && res.status === 200) {
           if (res.data) {
             this.transactions.push(res.data);
-            console.log(res.data);
 
             this.updateDoughtnutChart();
             this.updateLineChart();
@@ -273,12 +273,31 @@ export class MainPageComponent implements OnInit {
     }
   }
 
+  public async getGoal (): Promise<void> {
+    try {
+      const options: AxiosRequestConfig = {
+        method: 'POST',
+        url: this.getUserURL,
+        headers: {
+          Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+        }
+      };
+      const res = await axios(options);
+      if (res && res.status === 200) {
+        const user = JSON.parse(res.data.Resp);
+        this.budget = user.goal;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   public updateDoughtnutChart (): void {
     this.dataDoughtnut = [];
     this.doughtnutBackgroundColor = [];
     this.doughtnutBorderColor = [];
 
-    const groupedTransactions = _.groupBy(this.transactions, 'category');
+    const groupedTransactions = _.groupBy(this.transactions.filter((transaction) => moment(transaction).isSameOrBefore(moment()) && moment(transaction).isSameOrAfter(moment().subtract(30, 'days'))), 'category');
     const groupedCategories = _.groupBy(this.categories, 'name');
     this.labelsDoughnut = Object.keys(groupedTransactions);
 

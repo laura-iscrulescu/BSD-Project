@@ -13,44 +13,45 @@ import { TokenStorageService } from 'src/app/_services/storage/token-storage.ser
 export class SettingsComponent implements OnInit {
   public hideNew = true
   public hideOld = true
-  
+
   private changeUserURL = environment.changeUser;
   private changePasswdURL = environment.changePasswd;
+  private changeGoalURL = environment.changeGoal;
   modals: {
     usernameRef?: BsModalRef;
     passwordRef?: BsModalRef;
     goalRef?: BsModalRef;
   } = {};
 
-  changeUserNameForm = new FormGroup({    
-    name: new FormControl(),
-    email: new FormControl()
+  changeUserNameForm = new FormGroup({
+    name: new FormControl()
   })
 
-  changePasswordForm = new FormGroup({    
-    email: new FormControl(),
+  changePasswordForm = new FormGroup({
     oldPassword: new FormControl(),
     newPassword: new FormControl()
   })
 
-  constructor(private modalService: BsModalService, public tokenStorageService: TokenStorageService) { }
+  changeGoalForm = new FormGroup({
+    goal: new FormControl()
+  })
 
-  ngOnInit(): void {
+  constructor (private modalService: BsModalService, public tokenStorageService: TokenStorageService) { }
+
+  ngOnInit (): void {
   }
 
-  openModal(template: TemplateRef<any>, modalKey: string) {
+  openModal (template: TemplateRef<any>, modalKey: string) {
     this.modals[modalKey] = this.modalService.show(template);
   }
 
-  async submitUser(): Promise<void> {
-    const name = this.changeUserNameForm.value.name
-    const email = this.changeUserNameForm.value.email
+  async submitUser (): Promise<void> {
+    const name = this.changeUserNameForm.value.name;
 
-    if(name && email) {
+    if (name) {
       const reqBody = {
-        name: name,
-        email: email
-      }
+        name: name
+      };
       try {
         const options: AxiosRequestConfig = {
           method: 'POST',
@@ -60,7 +61,7 @@ export class SettingsComponent implements OnInit {
             Authorization: `Bearer ${this.tokenStorageService.getToken()}`
           }
         };
-        let res = await axios(options);
+        const res = await axios(options);
         if (res && res.status === 200) {
           // TODO do something with response if needed
         }
@@ -70,17 +71,15 @@ export class SettingsComponent implements OnInit {
     }
   }
 
-  async submitPassword(): Promise<void> {
-    const email = this.changePasswordForm.value.email
-    const oldPassword = this.changePasswordForm.value.oldPassword
-    const newPassword = this.changePasswordForm.value.newPassword
+  async submitPassword (): Promise<void> {
+    const oldPassword = this.changePasswordForm.value.oldPassword;
+    const newPassword = this.changePasswordForm.value.newPassword;
 
-    if(email && oldPassword && newPassword) {
+    if (oldPassword && newPassword) {
       const reqBody = {
-        email: email,
         oldPassword: oldPassword,
         newPassword: newPassword
-      }
+      };
       try {
         const options: AxiosRequestConfig = {
           method: 'POST',
@@ -90,10 +89,38 @@ export class SettingsComponent implements OnInit {
             Authorization: `Bearer ${this.tokenStorageService.getToken()}`
           }
         };
-        let res = await axios(options);
+        const res = await axios(options);
         if (res && res.status === 200) {
           this.changeUserNameForm.reset();
           this.modals.usernameRef?.hide();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+
+  async submitGoal (): Promise<void> {
+    const goal = this.changeGoalForm.value.goal;
+
+    if (goal) {
+      const reqBody = {
+        goal: goal
+      };
+      try {
+        const options: AxiosRequestConfig = {
+          method: 'POST',
+          data: reqBody,
+          url: this.changeGoalURL,
+          headers: {
+            Authorization: `Bearer ${this.tokenStorageService.getToken()}`
+          }
+        };
+        const res = await axios(options);
+        if (res && res.status === 200) {
+          console.log(res);
+          this.changeGoalForm.reset();
+          this.modals.goalRef?.hide();
         }
       } catch (e) {
         console.error(e);

@@ -251,66 +251,6 @@ func (s *serverStruct) Listen() error {
 		s.sendResponse(writer, errPrefix, resp, err, code)
 	})
 
-	http.HandleFunc("/user/category/add", func(writer http.ResponseWriter, req *http.Request) {
-		errPrefix := "CREATE CATEGORY: "
-
-		s.enableCors(&writer)
-		if req.Method == "OPTIONS" {
-			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
-			return
-		}
-
-		fullToken := req.Header.Get("Authorization")
-		if fullToken == "" {
-			errMessage := "The token was not provided"
-			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
-			return
-		}
-
-		var reqBody user.AddCategoryReq
-		err := json.NewDecoder(req.Body).Decode(&reqBody)
-		if err != nil {
-			s.log.Error(errPrefix + err.Error())
-			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
-			return
-		}
-		reqBody.Token = strings.Split(fullToken, "Bearer ")[1]
-
-		resp, err, code := userCollection.AddCategory(reqBody)
-		s.sendResponse(writer, errPrefix, resp, err, code)
-	})
-
-	http.HandleFunc("/user/category/remove", func(writer http.ResponseWriter, req *http.Request) {
-		errPrefix := "DELETE CATEGORY: "
-
-		s.enableCors(&writer)
-		if req.Method == "OPTIONS" {
-			s.sendResponse(writer, errPrefix, nil, nil, http.StatusOK)
-			return
-		}
-
-		fullToken := req.Header.Get("Authorization")
-		if fullToken == "" {
-			errMessage := "The token was not provided"
-			s.log.Error(errPrefix + errMessage)
-			s.sendResponse(writer, errPrefix, nil, errors.New(errMessage), http.StatusUnauthorized)
-			return
-		}
-
-		var reqBody user.RemoveCategoryReq
-		err := json.NewDecoder(req.Body).Decode(&reqBody)
-		if err != nil {
-			s.log.Error(errPrefix + err.Error())
-			s.sendResponse(writer, errPrefix, nil, err, http.StatusBadRequest)
-			return
-		}
-		reqBody.Token = strings.Split(fullToken, "Bearer ")[1]
-
-		resp, err, code := userCollection.RemoveCategory(reqBody)
-		s.sendResponse(writer, errPrefix, resp, err, code)
-	})
-
 	s.log.Info("Listen HTTP on " + s.addr + ":" + s.port)
 	return server.ListenAndServe()
 }

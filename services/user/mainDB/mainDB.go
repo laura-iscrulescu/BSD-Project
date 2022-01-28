@@ -16,7 +16,9 @@ import (
 type MainDB interface {
 	Add(email, password, name string) error
 	Get(email string) (*UserModel, error)
-	Update(user *UserModel) error
+	UpdateName(user *UserModel) error
+	UpdatePassword(user *UserModel) error
+	UpdateGoal(user *UserModel) error
 	Remove(username string) error
 }
 
@@ -116,13 +118,26 @@ func (m *mainDBStruct) Get(email string) (*UserModel, error) {
 	return resp, nil
 }
 
-func (m *mainDBStruct) Update(user *UserModel) error {
-	_, err := m.client.DeleteOne(m.ctx, bson.D{{"email", user.Email}})
+func (m *mainDBStruct) UpdateName(user *UserModel) error {
+	_, err := m.client.UpdateOne(m.ctx, bson.D{{"email", user.Email}}, bson.D{{"$set", bson.D{{"name", user.Name}}}})
 	if err != nil {
 		return err
 	}
 
-	_, err = m.client.InsertOne(m.ctx, *user)
+	return nil
+}
+
+func (m *mainDBStruct) UpdatePassword(user *UserModel) error {
+	_, err := m.client.UpdateOne(m.ctx, bson.D{{"email", user.Email}}, bson.D{{"$set", bson.D{{"password", user.Password}}}})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *mainDBStruct) UpdateGoal(user *UserModel) error {
+	_, err := m.client.UpdateOne(m.ctx, bson.D{{"email", user.Email}}, bson.D{{"$set", bson.D{{"goal", user.Goal}}}})
 	if err != nil {
 		return err
 	}

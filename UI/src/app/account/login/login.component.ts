@@ -30,9 +30,6 @@ export class LoginComponent implements OnInit {
       email: [null, [Validators.required, Validators.email]],
       password: [null, Validators.required]
     });
-
-    this.loginForm.get('email').setValue('test2@test.com');
-    this.loginForm.get('password').setValue('test2');
   }
 
   public async onSubmit (): Promise<void> {
