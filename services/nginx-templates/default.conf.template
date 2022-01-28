@@ -15,11 +15,6 @@ server {
 
     server_name  localhost;
 
-    #add_header Access-Control-Allow-Origin *;
-    #add_header Access-Control-Allow-Header Authorization;
-
-    #access_log  /var/log/nginx/host.access.log  main;
-
     location /authenticator {
         location /authenticator {
             auth_request  /auth;
